@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            /* display: flex; */
+        }
+        
+        .item {
+            margin: 24px;
+        }
+        
+        input {
+            width: 100%;
+            height: 28px;
+        }
+        
+        select {
+            width: 200px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsoneditor@9.9.0/dist/jsoneditor.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jsoneditor@9.9.0/dist/jsoneditor.min.js"></script>
+</head>
+
+<body>
+
+    <form class="">
+        <div class="item">
+            <label for="creators">创作者: </label>
+            <!-- <input type="text" name="creators" id="creators" required> -->
+
+            <select name="creators" id="creators" multiple="multiple">
+          
+          </select>
+
+
+        </div>
+        <div class="item">
+            <label for="sponsors">赞助方 </label>
+            <!-- <input type="sponsors" name="sponsors" id="sponsors" required> -->
+
+            <select name="sponsors" id="sponsors" multiple="multiple">
+       
+          </select>
+
+        </div>
+        <div class="item">
+            <label for="proposal">提案</label>
+            <input type="proposal" name="proposal" id="proposal" autocomplete>
+        </div>
+        <div class="item">
+            <label for="skills">技能</label>
+
+            <select name="skills" id="skills" multiple="multiple">
+               
+              </select>
+
+            <!-- <input type="skills" name="skills" id="skills" required> -->
+        </div>
+        <div class="item">
+            <label for="certifications">认证</label>
+            <!-- <input type="certifications" name="certifications" id="certifications" required> -->
+
+            <select name="certifications" id="certifications" multiple="multiple">
+         
+            </select>
+
+
+        </div>
+        <div class="item">
+            <label for="technicalSupports">技术</label>
+            <!-- <input type="technicalSupports" name="technicalSupports" id="technicalSupports" required> -->
+
+            <select name="technicalSupports" id="technicalSupports" multiple="multiple">
+              
+              </select>
+
+
+        </div>
+        <div class="item">
+            <label for="fileData">源文件</label>
+            <input type="file" name="fileData-input" id="fileData-input" />
+            <input type="text" name="fileData" id="fileData" />
+            <img src="" id="fileData-preview" style="width:200px" />
+        </div>
+        <div class="item">
+            <label for="filetype">文件类型</label>
+            <input type="filetype" name="filetype" id="filetype" required>
+        </div>
+        <div class="item">
+            <label for="achievements">用户成就 </label>
+            <!-- <input type="achievement" name="achievement" id="achievement" required> -->
+            <select name="achievements" id="achievements">
+               
+              </select>
+        </div>
+        <div class="item">
+            <label for="image">封面  – 预览图 - 尺寸建议320x320,640x320，推荐使用ipfs链接</label>
+            <input type="file" name="image-input" id="image-input" required>
+            <input type="text" name="image" id="image">
+            <img src="" id="image-preview" style="width:200px" />
+        </div>
+        <div class="item">
+            <label for="aspectRatio">宽高比</label>
+            <!-- <input type="s" name="s" id="s" required> -->
+
+            <select name="aspectRatio" id="aspectRatio">
+                <option value ="1">1 正方形</option>
+                <option value ="2">2 banner</option>
+              </select>
+
+
+        </div>
+        <div class="item">
+            <label for="description">描述</label>
+            <input type="description" name="description" id="description" required autocomplete>
+        </div>
+        <div class="item">
+            <label for="name">名称  ，可以很具体</label>
+            <input type="name" name="name" id="name" required autocomplete>
+        </div>
+
+        <div class="item">
+            <input type="submit" value="Subscribe!" onclick="getForm()">
+        </div>
+    </form>
+
+
+    <div id="jsoneditor" style="width: 400px; height: 400px;"></div>
+
+    <button id="export">导出</button>
+    <script>
+        const config = {
+            "creators": [{
+                "name": "shadow",
+                "text": "设计黑客",
+                "url": "https://github.com/shadowcz007"
+            }, {
+                "name": "潜石",
+                "text": "微信号 Einstein_Lannan，欢迎来到某石的Neverland，亲爱的彼得·潘们 ( ● '◡' ● ) 这里有故事（推理，科幻，幽默...）也有社评，影评，心理专栏...... 愿助你的棱角，守护你的软肋，与这个斑斓世界，温柔共处。"
+            }, {
+                "name": "碳基肥柴",
+                "text": "无界成员ML764，不会写代码的设计师不是好肥宅，一个游走在艺术和程序之间的人，欢迎一起奔赴未来，开启无界之旅。",
+                "url": "https://www.mrthinker.top"
+            }, {
+                "name": "🌞",
+                "text": "AI可以在瞬间颠覆人的想象力，但并不会超越，除非摆烂",
+                "url": ""
+
+            }, {
+                "name": "杜韦柯",
+                "text": "创造力团队、编辑团队、编辑助理",
+                "url": ""
+            }],
+            "sponsors": [{
+                "name": "MixDAO",
+                "url": "https://github.com/MixDAO-Web3"
+            }, {
+                "name": "shadow的实验室",
+                "url": "https://github.com/MixDAO-Web3"
+            }],
+            "proposal": {
+                "text": "DAO成员的凭证，可开启MixDAO的神秘通道",
+                "name": "MixDAO通行证"
+            },
+            "skills": Array.from(`DAO架构师
+            数字艺术家
+            NFT收藏家
+            人工智能专家
+            元宇宙创作者
+            DAO成员
+            虚拟空间设计师
+            导演
+            设计师
+            潮牌店主理人
+            投资人
+            路人甲
+            学生
+            跨界人才
+            AI艺术家
+            算法工程师
+            程序员
+            设计黑客
+            艺术黑客
+            科幻作者
+            游戏设计师
+            独立开发者
+            开源项目发起人
+            老师
+            顾问
+            首席品牌官
+            首席产品官
+            增长黑客
+
+            `.trim().split('\n').filter(f => f), a => {
+                return {
+                    name: a.trim()
+                }
+            }),
+            "certifications": [{
+                "name": "MixDAO",
+                "url": "https://github.com/MixDAO-Web3"
+            }],
+            "technicalSupports": [{
+                "name": "bigan",
+                "url": "http://open.flyray.me"
+            }, {
+                "name": "anyweb",
+                "url": "https://anyweb.cc"
+            }, {
+                "name": "Stable diffusion",
+                "url": "https://github.com/CompVis/stable-diffusion"
+            }],
+            "achievements": [{
+                "name": "Hello MixDAO",
+                "text": ""
+            }, {
+                "name": "AI生成挑战赛",
+                "text": ""
+            }, {
+                "name": "乐于分享",
+                "text": ""
+            }, {
+                "name": "Mixlab创造力团队",
+                "text": ""
+            }, {
+                "name": "开源见证",
+                "text": ""
+            }, {
+                "name": "NFT通行证",
+                "text": ""
+            }]
+        }
+
+
+        createOptions(config.creators, 'creators')
+        createOptions(config.sponsors, 'sponsors')
+            // proposal
+        createOptions(config.skills, 'skills')
+        createOptions(config.certifications, 'certifications')
+        createOptions(config.technicalSupports, 'technicalSupports')
+        createOptions(config.achievements, 'achievements')
+
+
+
+
+        function createOptions(objs, id) {
+
+            for (const obj of objs) {
+                let option = document.createElement('option');
+                option.value = JSON.stringify(obj);
+                option.innerText = obj.name;
+                document.querySelector('#' + id).appendChild(option)
+            }
+
+        }
+
+
+        let editor;
+
+        document.querySelector('#fileData-input').addEventListener('change', async e => {
+            let file = e.target.files[0];
+
+            document.querySelector('#filetype').value = file.type;
+            document.querySelector('#name').value = file.name.split('.')[0];
+            let res = await uploadFileData();
+            console.log(file.type, file, res)
+            document.querySelector('#fileData').value = res.data.fileUrl;
+            if (file.type.match('image')) {
+                document.querySelector('#fileData-preview').src = res.data.fileUrl
+
+            }
+        });
+        document.querySelector('#image-input').addEventListener('change', async e => {
+            let file = e.target.files[0];
+            console.log(file.type, file)
+            if (file.type.match('image')) {
+                let res = await uploadImage();
+                console.log(file.type, file, res)
+                document.querySelector('#image').value = res.data.fileUrl;
+                document.querySelector('#image-preview').src = res.data.fileUrl;
+                document.querySelector('#image-preview').onload = () => {
+                    document.querySelector('#aspectRatio').value = document.querySelector('#image-preview').naturalWidth / document.querySelector('#image-preview').naturalHeight
+                }
+
+            }
+            // document.querySelector('#filetype').value=file.type;
+            // document.querySelector('#name').value=file.name.split('.')[0];
+
+        });
+
+        document.querySelector('#export').addEventListener('click', e => {
+            let res = editor.get();
+            console.log(res)
+        })
+
+        createSkills();
+
+        function getForm() {
+
+            let json = {
+                creators: [],
+                sponsors: [],
+                proposal: {},
+                skills: [],
+                certifications: [],
+                technicalSupports: [],
+                image: '',
+                fileData: '',
+                filetype: '',
+                aspectRatio: 1,
+                achievements: '',
+                contract: '',
+                description: '',
+                name: ''
+            }
+            for (const key in json) {
+                let t = document.querySelector(`#${key}`);
+                if (t) json[key] = t.value;
+                if (t && t.getAttribute('multiple') === 'multiple') {
+                    json[key] = [];
+                    for (const option of t.querySelectorAll('option')) {
+                        if (option.selected == true) {
+                            json[key].push(option.value);
+                        }
+                    }
+                }
+                if (key === 'aspectRatio') json[key] = parseFloat(json[key])
+            }
+            console.log(json)
+            form2json(json)
+        }
+
+        function createSkills() {
+            let html = '';
+            let sk = `DAO架构师
+            数字艺术家
+            NFT收藏家
+            人工智能专家
+            元宇宙创作者
+            DAO成员
+            虚拟空间设计师
+            导演
+            设计师
+            潮牌店主理人
+            投资人
+            路人甲
+            学生
+            跨界人才
+            AI艺术家
+            算法工程师
+            程序员
+            设计黑客
+            艺术黑客
+            科幻作者
+            游戏设计师
+            独立开发者
+            开源项目发起人
+            老师
+            顾问
+            首席品牌官
+            首席产品官
+            增长黑客
+
+            `.trim().split('\n').filter(f => f);
+            for (const s of sk) {
+                html += `<option value="${s.trim()}">${s.trim()}</option>`;
+            }
+            document.querySelector('#skills').innerHTML = html;
+        }
+
+        function form2json(json) {
+            // create the editor
+            const container = document.getElementById("jsoneditor")
+            const options = {}
+            editor = new JSONEditor(container, options)
+
+            // set json
+            // const initialJson = {
+            //     "Array": [1, 2, 3],
+            //     "Boolean": true,
+            //     "Null": null,
+            //     "Number": 123,
+            //     "Object": {"a": "b", "c": "d"},
+            //     "String": "Hello World"
+            // }
+            editor.set(json)
+
+        }
+
+        // 合约地址 https://testnet.confluxscan.net/token/cfxtest:ace2w11u4g65jajzefbx2hf1yk2nesk8fu6fa4wxzn
+        // 确定哪些空投了
+        //post http://114.116.93.253:8097/ipfsUpload
+
+        async function uploadFileData() {
+            return await upload(document.getElementById("fileData-input"))
+        }
+        async function uploadImage() {
+            return await upload(document.getElementById("image-input"))
+        }
+        async function upload(ip) {
+
+            if (ip.files.length === 0) {
+                alert("请选择上传文件")
+                return false;
+            }
+
+            const formData = new FormData();
+            formData.append("file", ip.files[0]);
+            const url = "http://114.116.93.253:8097/ipfsUpload";
+            const res = await fetch(url, {
+                method: "POST",
+                body: formData //自动修改请求头,formdata的默认请求头的格式是 multipart/form-data
+            })
+
+            return await res.json();
+
+        }
+    </script>
+</body>
+
+</html>
