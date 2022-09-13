@@ -31,7 +31,7 @@
 
 <body>
 
-    <form class="">
+    <div class="">
         <div class="item">
             <label for="creators">创作者: </label>
             <!-- <input type="text" name="creators" id="creators" required> -->
@@ -53,7 +53,8 @@
         </div>
         <div class="item">
             <label for="proposal">提案</label>
-            <input type="proposal" name="proposal" id="proposal" autocomplete>
+            <select name="proposal" id="proposal"></select>
+            <!-- <input type="proposal" name="proposal" id="proposal" autocomplete> -->
         </div>
         <div class="item">
             <label for="skills">技能</label>
@@ -128,9 +129,9 @@
         </div>
 
         <div class="item">
-            <input type="submit" value="Subscribe!" onclick="getForm()">
+            <button onclick="getForm()">Subscribe</button>
         </div>
-    </form>
+    </div>
 
 
     <div id="jsoneditor" style="width: 400px; height: 400px;"></div>
@@ -144,7 +145,7 @@
                 "url": "https://github.com/shadowcz007"
             }, {
                 "name": "潜石",
-                "text": "微信号 Einstein_Lannan，欢迎来到某石的Neverland，亲爱的彼得·潘们 ( ● '◡' ● ) 这里有故事（推理，科幻，幽默...）也有社评，影评，心理专栏...... 愿助你的棱角，守护你的软肋，与这个斑斓世界，温柔共处。"
+                "text": "微信号Einstein_Lannan，欢迎来到某石的Neverland，亲爱的彼得·潘们 ( ● '◡' ● ) 这里有故事（推理，科幻，幽默...）也有社评，影评，心理专栏...... 愿助你的棱角，守护你的软肋，与这个斑斓世界，温柔共处。"
             }, {
                 "name": "碳基肥柴",
                 "text": "无界成员ML764，不会写代码的设计师不是好肥宅，一个游走在艺术和程序之间的人，欢迎一起奔赴未来，开启无界之旅。",
@@ -156,7 +157,7 @@
 
             }, {
                 "name": "杜韦柯",
-                "text": "创造力团队、编辑团队、编辑助理",
+                "text": "设计跨学科探索者，DAO组织实践者，元宇宙记者编辑",
                 "url": ""
             }],
             "sponsors": [{
@@ -166,10 +167,7 @@
                 "name": "shadow的实验室",
                 "url": "https://github.com/MixDAO-Web3"
             }],
-            "proposal": {
-                "text": "DAO成员的凭证，可开启MixDAO的神秘通道",
-                "name": "MixDAO通行证"
-            },
+            "proposal": ["MixDAO通行证和徽章体系发布"],
             "skills": Array.from(`DAO架构师
             数字艺术家
             NFT收藏家
@@ -220,29 +218,29 @@
             }],
             "achievements": [{
                 "name": "Hello MixDAO",
-                "text": ""
+                "text": "今天，DAO成立啦~"
             }, {
                 "name": "AI生成挑战赛",
-                "text": ""
+                "text": "挑战自我，遇见更好的自己"
             }, {
                 "name": "乐于分享",
-                "text": ""
+                "text": "感谢你的每一次无私分享"
             }, {
                 "name": "Mixlab创造力团队",
-                "text": ""
+                "text": "每一次协作，都代表着你的成长"
             }, {
                 "name": "开源见证",
-                "text": ""
+                "text": "一起见证开源项目的发布"
             }, {
                 "name": "NFT通行证",
-                "text": ""
+                "text": "DAO成员的凭证，开启DAO的神秘通道"
             }]
         }
 
 
         createOptions(config.creators, 'creators')
         createOptions(config.sponsors, 'sponsors')
-            // proposal
+        createOptions(config.proposal, 'proposal')
         createOptions(config.skills, 'skills')
         createOptions(config.certifications, 'certifications')
         createOptions(config.technicalSupports, 'technicalSupports')
@@ -255,15 +253,20 @@
 
             for (const obj of objs) {
                 let option = document.createElement('option');
-                option.value = JSON.stringify(obj);
-                option.innerText = obj.name;
+                option.value = typeof(obj) != 'string' ? JSON.stringify(obj) : obj;
+                option.innerText = obj.name || obj;
                 document.querySelector('#' + id).appendChild(option)
             }
 
         }
 
 
-        let editor;
+
+
+        // create the editor
+        const container = document.getElementById("jsoneditor")
+        const options = {}
+        let editor = new JSONEditor(container, options)
 
         document.querySelector('#fileData-input').addEventListener('change', async e => {
             let file = e.target.files[0];
@@ -297,8 +300,8 @@
         });
 
         document.querySelector('#export').addEventListener('click', e => {
-            let res = editor.get();
-            console.log(res)
+            window.res = editor.get();
+            console.log(window.res)
         })
 
         createSkills();
@@ -317,18 +320,19 @@
                 filetype: '',
                 aspectRatio: 1,
                 achievements: '',
-                contract: '',
+                // contract: '',
                 description: '',
                 name: ''
             }
             for (const key in json) {
                 let t = document.querySelector(`#${key}`);
                 if (t) json[key] = t.value;
+                if (key == 'achievements') json[key] = JSON.parse(t.value);
                 if (t && t.getAttribute('multiple') === 'multiple') {
                     json[key] = [];
                     for (const option of t.querySelectorAll('option')) {
                         if (option.selected == true) {
-                            json[key].push(option.value);
+                            json[key].push(['certifications', 'creators', 'sponsors', 'technicalSupports'].includes(key) ? JSON.parse(option.value) : option.value);
                         }
                     }
                 }
@@ -377,10 +381,7 @@
         }
 
         function form2json(json) {
-            // create the editor
-            const container = document.getElementById("jsoneditor")
-            const options = {}
-            editor = new JSONEditor(container, options)
+
 
             // set json
             // const initialJson = {
