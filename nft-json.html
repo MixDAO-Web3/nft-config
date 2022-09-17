@@ -31,6 +31,23 @@
 
 <body>
 
+    <div class="item">
+        <label for="tokenIds">合约下的tokenIds查询</label>
+
+        <select name="tokenIds" id="tokenIds">
+        </select>
+        <p>检查有哪些id已经发了</p>
+        <div id="tokenIds-result"></div>
+    </div>
+    <div class="item">
+        <p>查询钱包地址下的nft资产</p>
+        <input type="text" name="getAddressBalances" id="getAddressBalances">
+
+        <div id="getAddressBalances-result"></div>
+    </div>
+
+
+
     <div class="">
         <div class="item">
             <label for="creators">创作者: </label>
@@ -138,6 +155,46 @@
 
     <button id="export">导出</button>
     <script>
+        const contracts_default = {
+                "MixDAO徽章": "cfx:acd8xca66vh5cdd7rdfpxjkys5muj6yksabk8nfjvm",
+                "MixDAO通行证": "cfx:acd0sf2e5xyzx3as5etbu7710fzubk034pn3hfapy7"
+
+            }
+            // https://confluxscan.net/token/cfx:acd0sf2e5xyzx3as5etbu7710fzubk034pn3hfapy7
+
+        let tokenIdsHtml = '';
+        for (const key in contracts_default) {
+            tokenIdsHtml += `<option value="${contracts_default[key]}" >合约：${key}</option>`
+
+        };
+        document.querySelector('#tokenIds').innerHTML = tokenIdsHtml;
+        document.querySelector('#tokenIds').addEventListener('change', async e => {
+            getTokenIds(e.target.value).then(res => {
+                res.list = Array.from(res.list, t => t.tokenId)
+                document.querySelector('#tokenIds-result').innerText = JSON.stringify(res, null, 2)
+            })
+        })
+        async function getTokenIds(d) {
+            let res = await fetch(`https://api.confluxscan.net/nft/tokens?contract=${d}`);
+            res = await res.json()
+            return res.data
+        }
+
+        document.querySelector('#getAddressBalances').addEventListener('change', e => {
+            getAddressBalances(e.target.value).then(res => {
+
+                document.querySelector('#getAddressBalances-result').innerText = JSON.stringify(res, null, 2)
+            })
+        })
+
+        async function getAddressBalances(address) {
+            let res = await fetch(`https://api.confluxscan.net/nft/balances?limit=10000&owner=${address}`);
+            res = await res.json()
+
+            return res.data
+        }
+
+
         const config = {
             "creators": [{
                 "name": "shadow",
@@ -169,7 +226,7 @@
                 "url": "https://github.com/MixDAO-Web3"
             }, {
                 "name": "shadow的实验室",
-                "url": "https://github.com/MixDAO-Web3"
+                "url": "https://github.com/shadowcz007"
             }, {
                 "name": "迷塔城MetaCity",
                 "url": "https://mp.weixin.qq.com/s/U6WIPzgtYZR379UGBEN_ew"
