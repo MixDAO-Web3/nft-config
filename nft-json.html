@@ -24,9 +24,18 @@
         select {
             width: 200px;
         }
+        
+        .title {
+            font-size: 24px;
+            font-weight: 800;
+            background: yellow;
+        }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsoneditor@9.9.0/dist/jsoneditor.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jsoneditor@9.9.0/dist/jsoneditor.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/svg.js/3.1.1/svg.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/randomcolor@0.6.2/randomColor.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
 </head>
 
 <body>
@@ -45,8 +54,6 @@
 
         <div id="getAddressBalances-result"></div>
     </div>
-
-
 
     <div class="">
         <div class="item">
@@ -103,6 +110,22 @@
 
         </div>
         <div class="item">
+            <label for="description">描述</label>
+            <input type="description" name="description" id="description" required autocomplete>
+        </div>
+        <div class="item">
+            <label for="name">名称  ，可以很具体</label>
+            <input type="name" name="name" id="name" required autocomplete>
+        </div>
+
+
+        <div id="editable" contenteditable="true">
+            <p>这是一个可编辑的div区域</p>
+            <p>将图像粘贴到这里。</p>
+        </div>
+
+
+        <div class="item">
             <label for="fileData">源文件</label>
             <input type="file" name="fileData-input" id="fileData-input" />
             <input type="text" name="fileData" id="fileData" />
@@ -113,7 +136,7 @@
             <input type="filetype" name="filetype" id="filetype" required>
         </div>
         <div class="item">
-            <label for="achievements">用户成就 </label>
+            <label for="achievements" class="title">用户成就 </label>
             <!-- <input type="achievement" name="achievement" id="achievement" required> -->
             <select name="achievements" id="achievements">
                
@@ -136,14 +159,7 @@
 
 
         </div>
-        <div class="item">
-            <label for="description">描述</label>
-            <input type="description" name="description" id="description" required autocomplete>
-        </div>
-        <div class="item">
-            <label for="name">名称  ，可以很具体</label>
-            <input type="name" name="name" id="name" required autocomplete>
-        </div>
+
 
         <div class="item">
             <button onclick="getForm()">Subscribe</button>
@@ -222,6 +238,9 @@
                 "url": "https://mp.weixin.qq.com/s/U6WIPzgtYZR379UGBEN_ew"
             }],
             "sponsors": [{
+                "name": "Mixlab无界社区",
+                "url": "https://github.com/MixLabPro"
+            }, {
                 "name": "MixDAO",
                 "url": "https://github.com/MixDAO-Web3"
             }, {
@@ -246,6 +265,7 @@
             路人甲
             学生
             跨界人才
+            无边界学习者
             AI艺术家
             算法工程师
             程序员
@@ -260,7 +280,7 @@
             首席品牌官
             首席产品官
             增长黑客
-
+            专栏作者
             `.trim().split('\n').filter(f => f), a => {
                 return {
                     name: a.trim()
@@ -287,14 +307,47 @@
                 "name": "AI生成挑战赛",
                 "text": "挑战自我，遇见更好的自己"
             }, {
+                "name": "黑客马拉松",
+                "text": "一起协作，尽情创造"
+            }, {
                 "name": "乐于分享",
                 "text": "感谢你的每一次无私分享"
+            }, {
+                "name": "开拓者",
+                "text": "感谢你的每一次扩散"
             }, {
                 "name": "Mixlab创造力团队",
                 "text": "每一次协作，都代表着你的成长"
             }, {
+                "name": "BookDAO成立运营小组",
+                "text": "成立运营小组，制定语雀共建文档，正式探索《元宇宙创意图谱》知识DAO/MixDAO运营与商业模式"
+            }, {
+                "name": "专栏作者",
+                "text": "感谢你的系统化输出"
+            }, {
+                "name": "Mix嘉宾",
+                "text": "分享无限，突破知识边界"
+            }, {
+                "name": "无边界学习者",
+                "text": "致敬跨学科、不设限的持续学习者"
+            }, {
+                "name": "提案",
+                "text": "一起见证下一个苹果和谷歌的诞生"
+            }, {
+                "name": "走访计划",
+                "text": "零距离，挖掘商业机会"
+            }, {
+                "name": "激活器",
+                "text": "负责想出点子的人，创新的ABCDEF模型的A"
+            }, {
+                "name": "虚拟空间",
+                "text": "一起探索现实与虚拟的缝隙"
+            }, {
                 "name": "开源见证",
                 "text": "一起见证开源项目的发布"
+            }, {
+                "name": "做客MixDAO",
+                "text": "寻找当代 Crypto 达芬奇"
             }, {
                 "name": "NFT通行证",
                 "text": "DAO成员的凭证，开启DAO的神秘通道"
@@ -303,6 +356,9 @@
                 "text": "世集文旅在2022.9.13出发,带着迷塔城,带着人类对元宇宙的期待和幻想,赋予SH1933星球一个浪漫的定义"
             }]
         }
+
+
+
 
 
         createOptions(config.creators, 'creators')
@@ -371,7 +427,7 @@
             console.log(window.res)
         })
 
-        createSkills();
+        createSkills(config.skills);
 
         function getForm() {
 
@@ -405,44 +461,15 @@
                 }
                 if (key === 'aspectRatio') json[key] = parseFloat(json[key])
             }
-            console.log(json)
+
             form2json(json)
         }
 
-        function createSkills() {
+        function createSkills(skills) {
             let html = '';
-            let sk = `DAO架构师
-            数字艺术家
-            NFT收藏家
-            人工智能专家
-            元宇宙创作者
-            DAO成员
-            虚拟空间设计师
-            导演
-            设计师
-            潮牌店主理人
-            投资人
-            路人甲
-            学生
-            跨界人才
-            AI艺术家
-            算法工程师
-            程序员
-            设计黑客
-            艺术黑客
-            科幻作者
-            游戏设计师
-            独立开发者
-            开源项目发起人
-            老师
-            顾问
-            首席品牌官
-            首席产品官
-            增长黑客
 
-            `.trim().split('\n').filter(f => f);
-            for (const s of sk) {
-                html += `<option value="${s.trim()}">${s.trim()}</option>`;
+            for (const s of skills) {
+                html += `<option value="${s.name.trim()}">${s.name.trim()}</option>`;
             }
             document.querySelector('#skills').innerHTML = html;
         }
@@ -460,7 +487,7 @@
             //     "String": "Hello World"
             // }
             editor.set(json)
-
+            console.log(JSON.stringify(editor.get()))
         }
 
         // 合约地址 https://testnet.confluxscan.net/token/cfxtest:ace2w11u4g65jajzefbx2hf1yk2nesk8fu6fa4wxzn
@@ -490,6 +517,138 @@
 
             return await res.json();
 
+        }
+
+        function str2URL(data, type) {
+            // svg "image/svg+xml;charset=utf-8"
+            var blob = new Blob([data], {
+                type: type
+            })
+            return URL.createObjectURL(blob)
+        }
+
+        function createCanvas(width, height) {
+            let canvas = document.createElement('canvas')
+            canvas.width = width
+            canvas.height = height
+            return canvas
+        }
+
+        function downloadFile(url, filename) {
+            console.log(url)
+            if (!url) return
+            let link = document.createElement('a')
+            link.style.display = 'none'
+            link.href = url
+            link.setAttribute('download', filename)
+                // document.body.appendChild(link) 
+            link.click()
+                // document.body.removeChild(link);
+        }
+
+        function svg2base64(svgStr = null, type = 'png', width = null, height = null) {
+            if (!svgStr) return
+            return new Promise((resolve, reject) => {
+                let url = str2URL(svgStr, 'image/svg+xml;charset=utf-8')
+                let img = new Image();
+                img.onload = () => {
+                    width = width || img.width * 2
+                    height = height || img.height * 2
+                    let canvas = createCanvas(width, height)
+                    let ctx = canvas.getContext('2d')
+                    ctx.drawImage(img, 0, 0, width, height)
+                    let base64 = canvas.toDataURL(`image/${type}`)
+                    URL.revokeObjectURL(url)
+                    resolve(base64)
+                }
+                img.src = url
+            })
+        }
+
+        function create(text = '你好呀，欢迎及爱如 基金会 mixldao mixlab  斤斤计较') {
+            return fetch('01.svg').then(r => r.text()).then(t => {
+                let s = SVG();
+                s.svg(t);
+                let svg = s.children()[0];
+                svg.findOne('#font').attr('startOffset', Math.round(Math.random() * 200)).text(text);
+                svg.findOne('#board-02').attr('stroke', window._colors[Math.round(Math.random() * 10)])
+                    // svg2base64(svg.svg()).then(url => downloadFile(url));
+                    //document.body.appendChild(s.children()[0].node)
+                return svg
+            })
+        }
+
+        function addImg(svg, base64) {
+
+            let im = svg.findOne('#img');
+            im.svg(`<image x=\"${im.attr('x')}\" y=\"${im.attr('y')}\" width=\"${im.attr('width')}\" height=\"${im.attr('height')}\" xlink:href=\"${base64}\"></image>`)
+            return svg
+        }
+
+        function blobToDataURL(blob, cb) {
+            let reader = new FileReader();
+            reader.onload = function(evt) {
+                let base64 = evt.target.result;
+                cb(base64);
+            };
+            reader.readAsDataURL(blob);
+        };
+
+        function textParse(text) {
+            var pattern2 = new RegExp("[A-Za-z]+");
+
+            text = Array.from(text.split(""), t => {
+                return pattern2.test(t) ? t : ' ' + t + ' '
+            }).join("").replace(/\s+/gi, ' ')
+
+            return text
+        }
+
+        function pasteImg(e) {
+            // console.log(e)
+            if (e.clipboardData.items) {
+                ele = e.clipboardData.items
+                for (var i = 0; i < ele.length; ++i) {
+                    if (ele[i].kind == 'file' && ele[i].type.indexOf('image/') !== -1) {
+                        var blob = ele[i].getAsFile();
+                        let data = editor.get();
+                        blobToDataURL(blob, base64 => {
+                            create(
+                                textParse(data.name + ' - ' + Array.from(data.sponsors, s => s.name).join(' & '))
+                            ).then(svg => {
+                                svg = addImg(svg, base64);
+                                document.body.appendChild(svg.node)
+                            })
+                        })
+
+                    }
+
+                }
+            } else {
+                alert('non-chrome');
+            }
+        }
+
+        document.getElementById('editable').onpaste = function() {
+            getForm()
+            pasteImg(event);
+            return false;
+        };
+        createColors()
+
+        function createColors(n = 10) {
+            window._colors = []
+            const pane = new Tweakpane.Pane();
+            let colorsMap = {};
+            Array.from(new Array(10), a => {
+                let c = randomColor();
+                colorsMap[c] = c;
+                pane.addInput(colorsMap, c);
+                window._colors.push(c)
+            });
+            pane.on('change', (e) => {
+                console.log('changed: ' + JSON.stringify(e.value));
+            });
         }
     </script>
 </body>
