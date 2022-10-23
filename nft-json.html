@@ -30,12 +30,18 @@
             font-weight: 800;
             background: yellow;
         }
+        
+        .nft-image {
+            width: 600px;
+            height: 600px;
+        }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsoneditor@9.9.0/dist/jsoneditor.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jsoneditor@9.9.0/dist/jsoneditor.min.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/svg.js/3.1.1/svg.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/randomcolor@0.6.2/randomColor.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
+    <script src="http://unpkg.com/fabric/dist/fabric.min.js"></script>
 </head>
 
 <body>
@@ -572,8 +578,11 @@
                 let svg = s.children()[0];
                 svg.findOne('#font').attr('startOffset', Math.round(Math.random() * 200)).text(text);
                 svg.findOne('#board-02').attr('stroke', window._colors[Math.round(Math.random() * 10)])
-                    // svg2base64(svg.svg()).then(url => downloadFile(url));
-                    //document.body.appendChild(s.children()[0].node)
+                svg.findOne('text').dom = {};
+                svg.findOne('textPath').dom = {};
+                svg.findOne('tspan').dom = {};
+                // svg2base64(svg.svg()).then(url => downloadFile(url));
+                //document.body.appendChild(s.children()[0].node)
                 return svg
             })
         }
@@ -617,7 +626,13 @@
                                 textParse(data.name + ' - ' + Array.from(data.sponsors, s => s.name).join(' & '))
                             ).then(svg => {
                                 svg = addImg(svg, base64);
-                                document.body.appendChild(svg.node)
+
+                                svg2base64(svg.svg(), 'nft').then(base64 => {
+                                    let im = new Image();
+                                    im.className = 'nft-image'
+                                    im.src = base64;
+                                    document.body.appendChild(im);
+                                })
                             })
                         })
 
