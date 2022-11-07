@@ -221,7 +221,8 @@
             "creators": [{
                 "name": "shadow",
                 "text": "设计黑客",
-                "url": "https://github.com/shadowcz007"
+                "url": "https://github.com/shadowcz007",
+                "selected": true
             }, {
                 "name": "潜石",
                 "text": "微信号Einstein_Lannan，欢迎来到某石的Neverland，亲爱的彼得·潘们 ( ● '◡' ● ) 这里有故事（推理，科幻，幽默...）也有社评，影评，心理专栏...... 愿助你的棱角，守护你的软肋，与这个斑斓世界，温柔共处。"
@@ -245,10 +246,12 @@
             }],
             "sponsors": [{
                 "name": "Mixlab无界社区",
-                "url": "https://github.com/MixLabPro"
+                "url": "https://github.com/MixLabPro",
+                "selected": true
             }, {
                 "name": "MixDAO",
-                "url": "https://github.com/MixDAO-Web3"
+                "url": "https://github.com/MixDAO-Web3",
+                "selected": true
             }, {
                 "name": "DeAutoDAO",
                 "url": "https://www.deauto.io"
@@ -292,26 +295,32 @@
             专栏作者
             `.trim().split('\n').filter(f => f), a => {
                 return {
-                    name: a.trim()
+                    name: a.trim(),
+                    selected: Math.random() > 0.8
                 }
             }),
             "certifications": [{
                 "name": "MixDAO",
-                "url": "https://github.com/MixDAO-Web3"
+                "url": "https://github.com/MixDAO-Web3",
+                "selected": true
             }],
             "technicalSupports": [{
                 "name": "bigan",
-                "url": "http://open.flyray.me"
+                "url": "http://open.flyray.me",
+                "selected": true
             }, {
                 "name": "anyweb",
-                "url": "https://anyweb.cc"
+                "url": "https://anyweb.cc",
+                "selected": true
             }, {
                 "name": "Stable diffusion",
-                "url": "https://github.com/CompVis/stable-diffusion"
+                "url": "https://github.com/CompVis/stable-diffusion",
+                "selected": true
             }],
             "achievements": [{
                 "name": "Hello MixDAO",
-                "text": "今天，DAO成立啦~"
+                "text": "今天，DAO成立啦~",
+                "selected": true
             }, {
                 "name": "AI生成挑战赛",
                 "text": "挑战自我，遇见更好的自己"
@@ -324,6 +333,12 @@
             }, {
                 "name": "开拓者",
                 "text": "感谢你的每一次扩散"
+            }, {
+                "name": "共建者",
+                "text": "感谢参与建设组织"
+            }, {
+                "name": "超级个体",
+                "text": "寻找属于你的一片天地"
             }, {
                 "name": "Mixlab创造力团队",
                 "text": "每一次协作，都代表着你的成长"
@@ -373,21 +388,35 @@
         createOptions(config.creators, 'creators')
         createOptions(config.sponsors, 'sponsors')
         createOptions(config.proposal, 'proposal')
-        createOptions(config.skills, 'skills')
+            // createOptions(config.skills, 'skills')
         createOptions(config.certifications, 'certifications')
         createOptions(config.technicalSupports, 'technicalSupports')
         createOptions(config.achievements, 'achievements')
 
+        createSkills(config.skills);
 
+        function createSkills(skills) {
+            let html = '';
+
+            for (const s of skills) {
+                html += `<option value="${s.name.trim()}" ${s.selected?'selected':''}>${s.name.trim()}</option>`;
+            }
+            document.querySelector('#skills').innerHTML = html;
+        }
 
 
         function createOptions(objs, id) {
 
             for (const obj of objs) {
                 let option = document.createElement('option');
+                if (obj.selected) {
+                    option.setAttribute('selected', 1);
+                    delete obj['selected']
+                };
                 option.value = typeof(obj) != 'string' ? JSON.stringify(obj) : obj;
                 option.innerText = obj.name || obj;
-                document.querySelector('#' + id).appendChild(option)
+                document.querySelector('#' + id).appendChild(option);
+
             }
 
         }
@@ -404,7 +433,7 @@
             let file = e.target.files[0];
 
             document.querySelector('#filetype').value = file.type;
-            document.querySelector('#name').value = file.name.split('.')[0];
+            // document.querySelector('#name').value = file.name.split('.')[0];
             let res = await uploadFileData();
             console.log(file.type, file, res)
             document.querySelector('#fileData').value = res.data.fileUrl;
@@ -436,7 +465,8 @@
             console.log(window.res)
         })
 
-        createSkills(config.skills);
+
+
 
         function getForm() {
 
@@ -474,14 +504,7 @@
             form2json(json)
         }
 
-        function createSkills(skills) {
-            let html = '';
 
-            for (const s of skills) {
-                html += `<option value="${s.name.trim()}">${s.name.trim()}</option>`;
-            }
-            document.querySelector('#skills').innerHTML = html;
-        }
 
         function form2json(json) {
 
