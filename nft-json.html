@@ -368,7 +368,25 @@
             
             pane.addButton({
                 title:'打开模版'
-            }).on('click',e=> loadSvg())
+            }).on('click',e=> {
+                let input=document.createElement('input');
+                input.type='file';
+                input.click();
+                input.addEventListener('change',e=>{
+                    console.log(e.path[0].files)
+                    let files=e.path[0].files;
+                    if(files.length){
+                        let file = files[0];
+                        let reader = new FileReader();
+                        reader.onload = function(){
+                            window.PARAMS.templateSvg=this.result;
+                            loadSvg(window.PARAMS.templateSvg)
+                        };
+                        reader.readAsText(file);
+                    }
+                })
+                // loadSvg();
+            })
 
             pane.addInput(window.PARAMS, 'template', {
                             view: 'input-image',
@@ -702,19 +720,29 @@
         }
 
         function create(text = '你好呀，欢迎及爱如 基金会 mixldao mixlab  斤斤计较') {
-            return fetch('01.svg').then(r => r.text()).then(t => {
-                let s = SVG();
+            if(!window.PARAMS.templateSvg)return
+            return parseSvg(window.PARAMS.templateSvg,text);
+        }
+
+
+        function parseSvg(t,text=""){
+            let s = SVG();
                 s.svg(t);
                 let svg = s.children()[0];
-                svg.findOne('#font').attr('startOffset', Math.round(Math.random() * 200)).text(text);
-                svg.findOne('#board-02').attr('stroke', window._colors[Math.round(Math.random() * 10)])
-                svg.findOne('text').dom = {};
-                svg.findOne('textPath').dom = {};
-                svg.findOne('tspan').dom = {};
-                // svg2base64(svg.svg()).then(url => downloadFile(url));
-                //document.body.appendChild(s.children()[0].node)
-                return svg
-            })
+                
+                if(svg.findOne('#font')) svg.findOne('#font').attr('startOffset', Math.round(Math.random() * 200)).text(text);
+                
+                if(svg.findOne('#board-02')) svg.findOne('#board-02').attr('stroke', window._colors[Math.round(Math.random() * 10)]);
+                // 为了保证正常导出base64
+                for (const k of ['text','textPath','tspan']) {
+                    Array.from(svg.find(k),t=>{
+                        t.dom={};
+                    })
+                }
+                // svg.findOne('text').dom = {};
+                // svg.findOne('textPath').dom = {};
+                // svg.findOne('tspan').dom = {};
+            return svg
         }
 
         function addImg(svg, base64) {
@@ -752,22 +780,30 @@
                         var blob = ele[i].getAsFile();
                         let data = editor.get();
                         blobToDataURL(blob, base64 => {
+                            // 更新预览
+                            window.PARAMS.upload=new Image();
+                            window.PARAMS.upload.src=base64;
+                            pane.refresh();
+
                             let text='';
                             if(data.sponsors) text=data.name + ' - ' + Array.from(data.sponsors, s => s.name).join(' & ');
-                            create(
-                                textParse(text)
-                            ).then(svg => {
-                                svg = addImg(svg, base64);
 
+                           let svg= create(
+                                textParse(text)
+                            );
+                            if(svg){
+                                svg = addImg(svg, base64);
                                 svg2base64(svg.svg(), 'nft').then(base64 => {
-                                    let im = new Image();
-                                    im.className = 'nft-image'
-                                    im.src = base64;
-                                    document.querySelector('#result').innerHTML='';
-                                    document.querySelector('#result').appendChild(im);
-                                    // window._im=im;
+                                        let im = new Image();
+                                        im.className = 'nft-image'
+                                        im.src = base64;
+                                        document.querySelector('#result').innerHTML='';
+                                        document.querySelector('#result').appendChild(im);
+                                        // window._im=im;
                                 })
-                            })
+                            } 
+                            
+                            
                         })
 
                     }
@@ -778,21 +814,17 @@
             }
         }
 
-        function loadSvg(){
-            create(
-                    textParse('----------')
-                            ).then(svg => {
-                                svg2base64(svg.svg(), 'nft').then(base64 => {
-                                    let im = new Image();
-                                    im.className = 'nft-image'
-                                    im.src = base64;
-                                    // console.log(base64)
-                                    // document.body.appendChild(im);
-                                    window.PARAMS.template=im;
-                                    pane.refresh();
-                                })
-                            })
-        
+        function loadSvg(text){
+            let svg=parseSvg(text);
+            // console.log(svg);
+            svg2base64(svg.svg(), 'nft').then(base64 => {
+                let im = new Image();
+                im.className = 'nft-image'
+                im.src = base64;
+                window.PARAMS.template=im;
+                // window.PARAMS.svg=svg;
+                pane.refresh();
+            })             
         }
 
         document.getElementById('editable').onpaste = function() {
