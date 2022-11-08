@@ -35,59 +35,93 @@
             width: 400px;
             height: 400px;
         }
-
-        .tp-dfwv { width: 320px !important;}
-
-        #pane-for-multiple{
+        
+        .tp-dfwv {
+            width: 320px !important;
+        }
+        
+        #pane-for-multiple {
             display: none;
             width: 100%;
             height: 100vh;
             background-color: #eee;
             position: fixed;
-            top:0;
+            top: 0;
             left: 0;
             user-select: none;
         }
-        #pane-for-multiple .close-btn{
+        
+        #pane-for-multiple .close-btn {
             position: absolute;
+            bottom: 22px;
+            right: 50%;
+        }
+        
+        #pane-for-multiple #add-btn {
+            position: absolute;
+            bottom: 22px;
+            right: 40%;
+        }
+        
+        .btn {
             width: 44px;
             height: 44px;
             background: black;
             color: white;
             text-align: center;
             line-height: 44px;
-            bottom: 22px;
-            right: 50%;
             cursor: pointer;
         }
-        .tags{
+        
+        .tags {
             display: none;
             flex-wrap: wrap;
             flex-direction: column;
         }
-        .tag{
+        
+        .tag {
             background-color: aliceblue;
             line-height: 24px;
             font-size: 18px;
-            padding: 4px;
+            padding: 6px;
             margin: 8px;
+            width: fit-content;
             text-align: center;
             cursor: pointer;
         }
-        .selected{
+        
+        #new-item {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background: #eee;
+            z-index: 99;
+            position: fixed;
+            padding-left: 20%;
+            padding-top: 200px;
+            flex-direction: column;
+        }
+        
+        #new-item input {
+            margin: 12px;
+            width: 200px;
+        }
+        
+        .selected {
             background-color: aquamarine;
         }
-
-        #jsoneditor{
+        
+        #jsoneditor {
             display: none;
             position: fixed;
-            top:0;
+            top: 0;
             left: 0;
             background-color: #eee;
             width: 50% !important;
             height: 80vh !important;
         }
-        #editable{
+        
+        #editable {
             background-color: aquamarine;
             width: 200px;
             height: 200px;
@@ -100,7 +134,7 @@
     <script src="https://cdn.jsdelivr.net/npm/randomcolor@0.6.2/randomColor.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tweakpane-image-plugin@1.1.3/dist/tweakpane-image-plugin.min.js"></script>
-    
+
 </head>
 
 <body>
@@ -121,16 +155,22 @@
     </div>
 
 
-    <div id="pane-for-multiple"> 
+    <div id="pane-for-multiple">
         <div class="tags"></div>
+        <div id="add-btn" class="btn">新增</div>
+        <div id="new-item">
+            <div class="input"></div>
+            <div class="btn" id="complete-btn">确定</div>
+            <div class="btn" id="cancel-btn">取消</div>
+        </div>
         <div id="jsoneditor" style="width: 100%; height:100vh;"></div>
-        <div class="close-btn">X</div>
+        <div class="close-btn btn">X</div>
     </div>
 
-    
+
 
     <div id="editable" contenteditable="false">
-       <p>将图像粘贴到这里。</p>
+        <p>将图像粘贴到这里。</p>
     </div>
 
     <div id="result"></div>
@@ -144,12 +184,12 @@
           
           </select>
 
-          
+
         </div>
         <div class="item">
             <label for="sponsors">赞助方 </label>
             <!-- <input type="sponsors" name="sponsors" id="sponsors" required> -->
-           
+
             <select name="sponsors" id="sponsors" multiple="multiple">
        
           </select>
@@ -157,13 +197,13 @@
         </div>
         <div class="item">
             <label for="proposal">提案</label>
-            
+
             <select name="proposal" id="proposal"></select>
             <!-- <input type="proposal" name="proposal" id="proposal" autocomplete> -->
         </div>
         <div class="item">
             <label for="skills">技能</label>
-            
+
             <select name="skills" id="skills" multiple="multiple">
                
               </select>
@@ -173,7 +213,7 @@
         <div class="item">
             <label for="certifications">认证</label>
             <!-- <input type="certifications" name="certifications" id="certifications" required> -->
-            
+
             <select name="certifications" id="certifications" multiple="multiple">
          
             </select>
@@ -183,7 +223,7 @@
         <div class="item">
             <label for="technicalSupports">技术</label>
             <!-- <input type="technicalSupports" name="technicalSupports" id="technicalSupports" required> -->
-            
+
             <select name="technicalSupports" id="technicalSupports" multiple="multiple">
               
               </select>
@@ -199,7 +239,7 @@
             <input type="name" name="name" id="name" required autocomplete>
         </div>
 
-        
+
         <div class="item">
             <label for="fileData">源文件</label>
             <input type="file" name="fileData-input" id="fileData-input" />
@@ -207,7 +247,7 @@
             <img src="" id="fileData-preview" style="width:200px" />
         </div>
 
-       
+
 
         <div class="item">
             <label for="filetype">文件类型</label>
@@ -244,70 +284,74 @@
     </div>
 
 
-    
+
 
     <!-- <button id="export">导出</button> -->
     <script>
-        window.PARAMS={
-            description:'',
-            name:'',
-            image:'',
+        window.PARAMS = {
+            description: '',
+            name: '',
+            image: '',
             // 模版图片
-            template:'',
+            template: '',
             // 素材图片
-            upload:'', 
-            result:"{}"
+            upload: '',
+            result: "{}"
         };
         // window.RESULT={};
 
 
         const pane = new Tweakpane.Pane();
         pane.registerPlugin(TweakpaneImagePlugin);
-        
 
-        const menuItems={
-              "creators":"创作者",
-              "sponsors":"赞助方",
-              "proposal":"提案",
-              "skills":"技能",
-              "certifications":"认证",
-              "technicalSupports":"技术",
-              "achievements":"用户成就",
-              "description":"描述",
-              "name":"名称",
-              "fileData":"源文件",
-              "filetype":"文件类型",
-              "image":"封面",
-              "aspectRatio":"宽高比"
-            }
-        
+
+        const menuItems = {
+            "creators": "创作者",
+            "sponsors": "赞助方",
+            "proposal": "提案",
+            "skills": "技能",
+            "certifications": "认证",
+            "technicalSupports": "技术",
+            "achievements": "用户成就",
+            "description": "描述",
+            "name": "名称",
+            "fileData": "源文件",
+            "filetype": "文件类型",
+            "image": "封面",
+            "aspectRatio": "宽高比"
+        }
+
         // 模态框
-        const multiplePane={
-            init:()=>{
-                document.querySelector('#pane-for-multiple .close-btn').addEventListener('click',e=>{
+        const multiplePane = {
+            init: () => {
+                document.querySelector('#pane-for-multiple .close-btn').addEventListener('click', e => {
                     multiplePane.hidden();
-                })
+                });
+                document.querySelector('#pane-for-multiple #add-btn').addEventListener('click', e => {
+                    multiplePane.displayNewItem('flex')
+                });
             },
-            show:()=>{
-                let div=document.querySelector('#pane-for-multiple');
-                div.style.display='flex';
+            show: () => {
+                let div = document.querySelector('#pane-for-multiple');
+                div.style.display = 'flex';
             },
-            hidden:()=>document.querySelector('#pane-for-multiple').style.display='none',
-            showTags:()=>document.querySelector('#pane-for-multiple .tags').style.display='flex',
-            hiddenTags:()=>document.querySelector('#pane-for-multiple .tags').style.display='none',
-            displayJson:(d)=>document.querySelector('#jsoneditor').style.display=d,
+            hidden: () => document.querySelector('#pane-for-multiple').style.display = 'none',
+            showTags: () => document.querySelector('#pane-for-multiple .tags').style.display = 'flex',
+            hiddenTags: () => document.querySelector('#pane-for-multiple .tags').style.display = 'none',
+            displayJson: (d) => document.querySelector('#jsoneditor').style.display = d,
+            displayNewItem: (d) => document.querySelector('#pane-for-multiple #new-item').style.display = d,
         }
 
         multiplePane.init();
 
 
-        const updateResult=(id,val)=>{
-                let res=JSON.parse(window.PARAMS.result);
-                res[id]=JSON.parse(val);
-                delete res[id].selected;
-                delete res[id].id;
-                window.PARAMS.result=JSON.stringify(res,null,2)
-            }
+        const updateResult = (id, val) => {
+            let res = JSON.parse(window.PARAMS.result);
+            res[id] = JSON.parse(val);
+            delete res[id].selected;
+            delete res[id].id;
+            window.PARAMS.result = JSON.stringify(res, null, 2)
+        }
 
 
         const contracts_default = {
@@ -349,18 +393,18 @@
             return res.data
         }
 
-        function initConfig(){
-           return new Promise((res,rej)=>{
-                fetch('config.json').then(res=>res.json()).then(json=>{
-                    json.skills= Array.from(json.skills.filter(f => f), a => {
+        function initConfig() {
+            return new Promise((res, rej) => {
+                fetch('config.json').then(res => res.json()).then(json => {
+                    json.skills = Array.from(json.skills.filter(f => f), a => {
                         return {
-                                name: a.trim(),
-                                selected: Math.random() > 0.8
-                            }
+                            name: a.trim(),
+                            selected: Math.random() > 0.8
+                        }
                     });
-                    json.proposal=Array.from(json.proposal,p=>{
+                    json.proposal = Array.from(json.proposal, p => {
                         return {
-                            name:p
+                            name: p
                         }
                     })
                     res(json)
@@ -368,61 +412,66 @@
             })
         }
 
-        initConfig().then(config=>{
+        initConfig().then(config => {
             console.log(config)
             pane.addInput(window.PARAMS, 'upload', {
-                            view: 'input-image',
-                            imageFit: 'contain',
-                            label:'徽章图片'
-                            // extensions: '.svg',
-                        });
+                view: 'input-image',
+                imageFit: 'contain',
+                label: '徽章图片'
+                    // extensions: '.svg',
+            });
 
-            pane.addInput(window.PARAMS, 'name',{
-                label:'名称'
+            pane.addInput(window.PARAMS, 'name', {
+                label: '名称'
             });
-            pane.addInput(window.PARAMS, 'description',{
-                label:'描述'
+            pane.addInput(window.PARAMS, 'description', {
+                label: '描述'
             });
-            
-            
+
+
             pane.addButton({
-                title:'打开模版'
-            }).on('click',e=> {
-                let input=document.createElement('input');
-                input.type='file';
+                title: '打开模版'
+            }).on('click', e => {
+                let input = document.createElement('input');
+                input.type = 'file';
                 input.click();
-                input.addEventListener('change',e=>{
-                    console.log(e.path[0].files)
-                    let files=e.path[0].files;
-                    if(files.length){
+                input.addEventListener('change', e => {
+                    // console.log(e.path[0].files)
+                    let files = e.path[0].files;
+                    if (files.length) {
                         let file = files[0];
                         let reader = new FileReader();
-                        reader.onload = function(){
-                            window.PARAMS.templateSvg=this.result;
+                        reader.onload = function() {
+                            window.PARAMS.templateSvg = this.result;
                             loadSvg(window.PARAMS.templateSvg)
                         };
                         reader.readAsText(file);
                     }
                 })
-                // loadSvg();
+            });
+
+            // 默认的模板
+            fetch('01.svg').then(res => res.text()).then(text => {
+                window.PARAMS.templateSvg = text;
+                loadSvg(window.PARAMS.templateSvg)
             })
 
             pane.addInput(window.PARAMS, 'template', {
-                            view: 'input-image',
-                            imageFit: 'contain',
-                            label:'模版'
-                            // extensions: '.svg',
-                        });
+                view: 'input-image',
+                imageFit: 'contain',
+                label: '模版'
+                    // extensions: '.svg',
+            });
             createOptions(config.certifications, 'certifications')
             createOptions(config.proposal, 'proposal')
             createOptions(config.achievements, 'achievements');
 
-            createOptions(config.creators, 'creators',true)
-            createOptions(config.sponsors, 'sponsors',true)
-            createOptions(config.technicalSupports, 'technicalSupports',true);
-            createOptions(config.skills, 'skills',true);
+            createOptions(config.creators, 'creators', true)
+            createOptions(config.sponsors, 'sponsors', true)
+            createOptions(config.technicalSupports, 'technicalSupports', true);
+            createOptions(config.skills, 'skills', true);
 
-        
+
             // pane.addMonitor(window.PARAMS, 'result', {
             //         label:'元数据',
             //         multiline: true,
@@ -430,11 +479,11 @@
             //     });
 
             pane.addButton({
-                    title: '导出',
-                    label: '导出',
-                }).on('click',e=>{
-                    getResult()
-                })
+                title: '导出',
+                label: '导出',
+            }).on('click', e => {
+                getResult()
+            })
 
             createColors();
 
@@ -442,113 +491,135 @@
 
 
 
-        function createMultipleOptions(id,objs) {
+        function createMultipleOptions(id, objs) {
             let html = '';
 
             for (const s of objs) {
-                let n={...s};
+                let n = {...s
+                };
                 delete n.selected;
                 html += `<div class="tag ${s.selected?'selected':''}" value='${JSON.stringify(n)}'>${s.name.trim()}</div>`;
             };
-            
-            document.querySelector('#pane-for-multiple .tags').innerHTML =html;
-            Array.from(document.querySelectorAll('#pane-for-multiple .tag'),t=>{
-                t.addEventListener('click',e=>{
+
+            // 
+            document.querySelector('#pane-for-multiple .tags').innerHTML = html;
+
+
+            // 新增的输入表单，允许自行添加
+            let newItem = {...objs[0]
+            };
+            delete newItem.id;
+            delete newItem.selected;
+            document.querySelector('#pane-for-multiple #new-item .input').innerHTML = '';
+            for (const key in newItem) {
+                let inp = document.createElement('input');
+                inp.type = 'text';
+                inp.setAttribute('placeholder', key);
+                inp.setAttribute('autocomplete', "off");
+                document.querySelector('#pane-for-multiple #new-item .input').appendChild(inp);
+            };
+
+
+
+            Array.from(document.querySelectorAll('#pane-for-multiple .tag'), t => {
+                t.addEventListener('click', e => {
                     t.classList.toggle('selected');
-                    let tags=Array.from(document.querySelectorAll('#pane-for-multiple .tag'),t=>{
-                        if(t.classList.contains('selected')){
-                            let json=JSON.parse(t.getAttribute('value'));
+                    let tags = Array.from(document.querySelectorAll('#pane-for-multiple .tag'), t => {
+                        if (t.classList.contains('selected')) {
+                            let json = JSON.parse(t.getAttribute('value'));
                             delete json.id;
                             delete json.selected;
                             return json
                         }
-                    }).filter(t=>t);
-                    updateResult(id,JSON.stringify(tags));
+                    }).filter(t => t);
+                    updateResult(id, JSON.stringify(tags));
                 })
             })
-            
+
         }
 
 
-        function createOptions(objs, id,multiple=false) {
+        function createOptions(objs, id, multiple = false) {
 
-            let options=[];
-            let selectedValues=[];
+            let options = [];
+            let selectedValues = [];
             // JSON.stringify({...objs[0],id});
             // if(id==='skills'||id==="proposal") selectedValue=objs[0].name.trim();
             for (const obj of objs) {
                 // 注入id
-                obj.id=id;
+                obj.id = id;
 
                 if (obj.selected) {
                     // delete obj.selected;
                     selectedValues.push(obj);
                 };
-          
-                let val=JSON.stringify(obj);
-    
+
+                let val = JSON.stringify(obj);
+
                 options.push({
-                    value:val,
-                    text:obj.name
+                    value: val,
+                    text: obj.name
                 })
             };
 
-            if(selectedValues.length==0) selectedValues.push(objs[0])
-            // console.log(options,id,selectedValue)
-            window.PARAMS[menuItems[id]]=JSON.stringify(selectedValues[0]);
-            
-            if(multiple){
-                window.PARAMS[menuItems[id]]=objs;
+            if (selectedValues.length == 0) selectedValues.push(objs[0])
+                // console.log(options,id,selectedValue)
+            window.PARAMS[menuItems[id]] = JSON.stringify(selectedValues[0]);
 
-                updateResult(id,JSON.stringify(selectedValues));
+            if (multiple) {
+                window.PARAMS[menuItems[id]] = objs;
+
+                updateResult(id, JSON.stringify(selectedValues));
 
                 pane.addButton({
                     title: '选择',
-                    label: menuItems[id],   // optional
+                    label: menuItems[id], // optional
                     // value:'333'
-                }).on('click',e=>{
+                }).on('click', e => {
 
                     multiplePane.show();
                     multiplePane.showTags();
                     multiplePane.displayJson('none');
+                    multiplePane.displayNewItem('none');
 
-                    let label=e.target.label;
+                    let label = e.target.label;
                     // console.log(JSON.parse(window.PARAMS.result)[id],window.PARAMS[label]);
 
-                    let list=[],selected=JSON.parse(window.PARAMS.result)[id];
+                    let list = [],
+                        selected = JSON.parse(window.PARAMS.result)[id];
 
                     for (const u of window.PARAMS[label]) {
-                        u.selected=false;
+                        u.selected = false;
                         for (const s of selected) {
-                            if(u.name==s.name) u.selected=true;
+                            if (u.name == s.name) u.selected = true;
                         };
                         list.push(u)
                     }
-                    
-                    createMultipleOptions(id,list)
+
+                    createMultipleOptions(id, list)
                 })
 
-            }else{
+            } else {
 
-                updateResult(id,JSON.stringify(selectedValues[0]));
+                updateResult(id, JSON.stringify(selectedValues[0]));
 
                 pane.addBlade({
                     view: 'list',
                     label: menuItems[id],
                     options,
                     value: JSON.stringify(selectedValues[0]),
-                }).on('change',e=>{
-                    updateResult(id,e.value);
+                }).on('change', e => {
+                    updateResult(id, e.value);
                 });
             }
-            
+
         }
 
-        
+
 
         function createColors(n = 10) {
             window._colors = []
-            // const pane = new Tweakpane.Pane();
+                // const pane = new Tweakpane.Pane();
             let colorsMap = {};
             Array.from(new Array(10), a => {
                 let c = randomColor();
@@ -565,7 +636,7 @@
         function copy(value) {
             let transfer = document.createElement('input');
             document.body.appendChild(transfer);
-            transfer.value =value;  // 这里表示想要复制的内容
+            transfer.value = value; // 这里表示想要复制的内容
             transfer.focus();
             transfer.select();
             if (document.execCommand('copy')) {
@@ -623,7 +694,7 @@
 
 
 
-        function getResult(display='block') {
+        function getResult(display = 'block') {
 
             let json = {
                 creators: [],
@@ -639,25 +710,25 @@
                 achievements: '',
                 // contract: '',
                 description: window.PARAMS.description,
-                name:window.PARAMS.name,
+                name: window.PARAMS.name,
                 ...JSON.parse(window.PARAMS.result)
             };
-            for (const k of ['creators','sponsors','technicalSupports']) {
-                json[k]=Array.from(json[k],c=>{
+            for (const k of['creators', 'sponsors', 'technicalSupports']) {
+                json[k] = Array.from(json[k], c => {
                     delete c.id;
                     delete c.selected;
                     return c
                 });
             }
-            
-            json.skills=Array.from(json.skills,s=>s.name);
-            json.proposal=json.proposal.name;
-            
+
+            json.skills = Array.from(json.skills, s => s.name);
+            json.proposal = json.proposal.name;
+
 
             editor.set(json)
             console.log(JSON.stringify(editor.get()))
             copy(JSON.stringify(json))
-            
+
             multiplePane.show();
             multiplePane.hiddenTags();
             multiplePane.displayJson(display);
@@ -774,28 +845,28 @@
         }
 
         function create(text = '你好呀，欢迎及爱如 基金会 mixldao mixlab  斤斤计较') {
-            if(!window.PARAMS.templateSvg)return
-            return parseSvg(window.PARAMS.templateSvg,text);
+            if (!window.PARAMS.templateSvg) return
+            return parseSvg(window.PARAMS.templateSvg, text);
         }
 
 
-        function parseSvg(t,text=""){
+        function parseSvg(t, text = "") {
             let s = SVG();
-                s.svg(t);
-                let svg = s.children()[0];
-                
-                if(svg.findOne('#font')) svg.findOne('#font').attr('startOffset', Math.round(Math.random() * 200)).text(text);
-                
-                if(svg.findOne('#board-02')) svg.findOne('#board-02').attr('stroke', window._colors[Math.round(Math.random() * 10)]);
-                // 为了保证正常导出base64
-                for (const k of ['text','textPath','tspan']) {
-                    Array.from(svg.find(k),t=>{
-                        t.dom={};
-                    })
-                }
-                // svg.findOne('text').dom = {};
-                // svg.findOne('textPath').dom = {};
-                // svg.findOne('tspan').dom = {};
+            s.svg(t);
+            let svg = s.children()[0];
+
+            if (svg.findOne('#font')) svg.findOne('#font').attr('startOffset', Math.round(Math.random() * 200)).text(text);
+
+            if (svg.findOne('#board-02')) svg.findOne('#board-02').attr('stroke', window._colors[Math.round(Math.random() * 10)]);
+
+            // 为了保证正常导出base64
+            let ks = ['text', 'textPath', 'tspan']
+            for (const k of ks) {
+                Array.from(svg.find(k), t => {
+                    t.dom = {};
+                })
+            }
+
             return svg
         }
 
@@ -835,29 +906,29 @@
                         let data = editor.get();
                         blobToDataURL(blob, base64 => {
                             // 更新预览
-                            window.PARAMS.upload=new Image();
-                            window.PARAMS.upload.src=base64;
+                            window.PARAMS.upload = new Image();
+                            window.PARAMS.upload.src = base64;
                             pane.refresh();
 
-                            let text='';
-                            if(data.sponsors) text=data.name + ' - ' + Array.from(data.sponsors, s => s.name).join(' & ');
+                            let text = '';
+                            if (data.sponsors) text = data.name + ' - ' + Array.from(data.sponsors, s => s.name).join(' & ');
 
-                           let svg= create(
+                            let svg = create(
                                 textParse(text)
                             );
-                            if(svg){
+                            if (svg) {
                                 svg = addImg(svg, base64);
                                 svg2base64(svg.svg(), 'nft').then(base64 => {
-                                        let im = new Image();
-                                        im.className = 'nft-image'
-                                        im.src = base64;
-                                        document.querySelector('#result').innerHTML='';
-                                        document.querySelector('#result').appendChild(im);
-                                        // window._im=im;
+                                    let im = new Image();
+                                    im.className = 'nft-image'
+                                    im.src = base64;
+                                    document.querySelector('#result').innerHTML = '';
+                                    document.querySelector('#result').appendChild(im);
+                                    // window._im=im;
                                 })
-                            } 
-                            
-                            
+                            }
+
+
                         })
 
                     }
@@ -868,17 +939,17 @@
             }
         }
 
-        function loadSvg(text){
-            let svg=parseSvg(text);
+        function loadSvg(text) {
+            let svg = parseSvg(text);
             // console.log(svg);
             svg2base64(svg.svg(), 'nft').then(base64 => {
                 let im = new Image();
                 im.className = 'nft-image'
                 im.src = base64;
-                window.PARAMS.template=im;
+                window.PARAMS.template = im;
                 // window.PARAMS.svg=svg;
                 pane.refresh();
-            })             
+            })
         }
 
         document.getElementById('editable').onpaste = function() {
@@ -886,8 +957,6 @@
             pasteImg(event);
             return false;
         };
-        
-       
     </script>
 </body>
 
