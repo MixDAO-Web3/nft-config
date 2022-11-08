@@ -32,8 +32,51 @@
         }
         
         .nft-image {
-            width: 600px;
-            height: 600px;
+            width: 400px;
+            height: 400px;
+        }
+
+        .tp-dfwv { width: 320px !important;}
+
+        #pane-for-multiple{
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background-color: #eee;
+            position: fixed;
+            top:0;
+            left: 0;
+            user-select: none;
+        }
+        .tags{
+            display: flex;
+            flex-direction: column;
+        }
+        .tag{
+            background-color: aliceblue;
+            line-height: 24px;
+            font-size: 18px;
+            padding: 4px;
+            margin: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .selected{
+            background-color: aquamarine;
+        }
+
+        #jsoneditor{
+            display: none;
+            position: fixed;
+            top:0;
+            left: 0;
+            background-color: #eee;
+        }
+        #editable{
+            background-color: aquamarine;
+            width: 200px;
+            height: 200px;
+            padding: 12px;
         }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsoneditor@9.9.0/dist/jsoneditor.min.css">
@@ -41,7 +84,8 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/svg.js/3.1.1/svg.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/randomcolor@0.6.2/randomColor.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
-    <script src="http://unpkg.com/fabric/dist/fabric.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tweakpane-image-plugin@1.1.3/dist/tweakpane-image-plugin.min.js"></script>
+    
 </head>
 
 <body>
@@ -61,7 +105,21 @@
         <div id="getAddressBalances-result"></div>
     </div>
 
-    <div class="">
+
+    <div id="pane-for-multiple"> 
+        <div class="tags"></div>
+        <div class="close-btn">X</div>
+    </div>
+
+    <div id="jsoneditor" style="width: 100%; height:100vh;"></div>
+
+    <div id="editable" contenteditable="false">
+       <p>将图像粘贴到这里。</p>
+    </div>
+
+    <div id="result"></div>
+
+    <div class="" style="display:none">
         <div class="item">
             <label for="creators">创作者: </label>
             <!-- <input type="text" name="creators" id="creators" required> -->
@@ -70,12 +128,12 @@
           
           </select>
 
-
+          
         </div>
         <div class="item">
             <label for="sponsors">赞助方 </label>
             <!-- <input type="sponsors" name="sponsors" id="sponsors" required> -->
-
+           
             <select name="sponsors" id="sponsors" multiple="multiple">
        
           </select>
@@ -83,12 +141,13 @@
         </div>
         <div class="item">
             <label for="proposal">提案</label>
+            
             <select name="proposal" id="proposal"></select>
             <!-- <input type="proposal" name="proposal" id="proposal" autocomplete> -->
         </div>
         <div class="item">
             <label for="skills">技能</label>
-
+            
             <select name="skills" id="skills" multiple="multiple">
                
               </select>
@@ -98,7 +157,7 @@
         <div class="item">
             <label for="certifications">认证</label>
             <!-- <input type="certifications" name="certifications" id="certifications" required> -->
-
+            
             <select name="certifications" id="certifications" multiple="multiple">
          
             </select>
@@ -108,7 +167,7 @@
         <div class="item">
             <label for="technicalSupports">技术</label>
             <!-- <input type="technicalSupports" name="technicalSupports" id="technicalSupports" required> -->
-
+            
             <select name="technicalSupports" id="technicalSupports" multiple="multiple">
               
               </select>
@@ -124,19 +183,16 @@
             <input type="name" name="name" id="name" required autocomplete>
         </div>
 
-
-        <div id="editable" contenteditable="true">
-            <p>这是一个可编辑的div区域</p>
-            <p>将图像粘贴到这里。</p>
-        </div>
-
-
+        
         <div class="item">
             <label for="fileData">源文件</label>
             <input type="file" name="fileData-input" id="fileData-input" />
             <input type="text" name="fileData" id="fileData" />
             <img src="" id="fileData-preview" style="width:200px" />
         </div>
+
+       
+
         <div class="item">
             <label for="filetype">文件类型</label>
             <input type="filetype" name="filetype" id="filetype" required>
@@ -163,20 +219,78 @@
                 <option value ="2">2 banner</option>
               </select>
 
-
         </div>
 
 
-        <div class="item">
+        <!-- <div class="item">
             <button onclick="getForm()">Subscribe</button>
-        </div>
+        </div> -->
     </div>
 
 
-    <div id="jsoneditor" style="width: 400px; height: 400px;"></div>
+    
 
-    <button id="export">导出</button>
+    <!-- <button id="export">导出</button> -->
     <script>
+        window.PARAMS={
+            description:'',
+            name:'',
+            image:'',
+            // 模版图片
+            template:'',
+            // 素材图片
+            upload:'', 
+            result:"{}"
+        };
+        // window.RESULT={};
+
+
+        const pane = new Tweakpane.Pane();
+        pane.registerPlugin(TweakpaneImagePlugin);
+        
+
+        const menuItems={
+              "creators":"创作者",
+              "sponsors":"赞助方",
+              "proposal":"提案",
+              "skills":"技能",
+              "certifications":"认证",
+              "technicalSupports":"技术",
+              "achievements":"用户成就",
+              "description":"描述",
+              "name":"名称",
+              "fileData":"源文件",
+              "filetype":"文件类型",
+              "image":"封面",
+              "aspectRatio":"宽高比"
+            }
+        
+        // 模态框
+        const multiplePane={
+            init:()=>{
+                document.querySelector('#pane-for-multiple .close-btn').addEventListener('click',e=>{
+                    multiplePane.hidden();
+                })
+            },
+            show:()=>{
+                let div=document.querySelector('#pane-for-multiple');
+                div.style.display='flex';
+            },
+            hidden:()=>document.querySelector('#pane-for-multiple').style.display='none'
+        }
+
+        multiplePane.init();
+
+
+        const updateResult=(id,val)=>{
+                let res=JSON.parse(window.PARAMS.result);
+                res[id]=JSON.parse(val);
+                delete res[id].selected;
+                delete res[id].id;
+                window.PARAMS.result=JSON.stringify(res,null,2)
+            }
+
+
         const contracts_default = {
                 "MixDAO徽章": "cfx:acd8xca66vh5cdd7rdfpxjkys5muj6yksabk8nfjvm",
                 "MixDAO通行证": "cfx:acd0sf2e5xyzx3as5etbu7710fzubk034pn3hfapy7"
@@ -216,212 +330,184 @@
             return res.data
         }
 
-
-        const config = {
-            "creators": [{
-                "name": "shadow",
-                "text": "设计黑客",
-                "url": "https://github.com/shadowcz007",
-                "selected": true
-            }, {
-                "name": "潜石",
-                "text": "微信号Einstein_Lannan，欢迎来到某石的Neverland，亲爱的彼得·潘们 ( ● '◡' ● ) 这里有故事（推理，科幻，幽默...）也有社评，影评，心理专栏...... 愿助你的棱角，守护你的软肋，与这个斑斓世界，温柔共处。"
-            }, {
-                "name": "碳基肥柴",
-                "text": "无界成员ML764，不会写代码的设计师不是好肥宅，一个游走在艺术和程序之间的人，欢迎一起奔赴未来，开启无界之旅。",
-                "url": "https://www.mrthinker.top"
-            }, {
-                "name": "🌞",
-                "text": "AI可以在瞬间颠覆人的想象力，但并不会超越，除非摆烂",
-                "url": ""
-
-            }, {
-                "name": "杜韦柯",
-                "text": "设计跨学科探索者，DAO组织实践者，元宇宙记者编辑",
-                "url": ""
-            }, {
-                "name": "迷塔城MetaCity",
-                "text": "迷塔城1933是以赛博科幻姿态，追求潮流打卡的文化空间；依托1933老场坊精妙结构，近10000平的电影级科幻置景。在不同的势力建筑中留下影像，在迷塔城彰显个性姿态，你就是赛博世界的主角。",
-                "url": "https://mp.weixin.qq.com/s/U6WIPzgtYZR379UGBEN_ew"
-            }],
-            "sponsors": [{
-                "name": "Mixlab无界社区",
-                "url": "https://github.com/MixLabPro",
-                "selected": true
-            }, {
-                "name": "MixDAO",
-                "url": "https://github.com/MixDAO-Web3",
-                "selected": true
-            }, {
-                "name": "DeAutoDAO",
-                "url": "https://www.deauto.io"
-            }, {
-                "name": "shadow的实验室",
-                "url": "https://github.com/shadowcz007"
-            }, {
-                "name": "迷塔城MetaCity",
-                "url": "https://mp.weixin.qq.com/s/U6WIPzgtYZR379UGBEN_ew"
-            }],
-            "proposal": ["MixDAO通行证和徽章体系发布", "MetaCity启航数字纪念徽章"],
-            "skills": Array.from(`DAO架构师
-            数字艺术家
-            NFT收藏家
-            人工智能专家
-            元宇宙创作者
-            DAO成员
-            虚拟空间设计师
-            导演
-            设计师
-            潮牌店主理人
-            投资人
-            路人甲
-            学生
-            跨界人才
-            无边界学习者
-            AI艺术家
-            算法工程师
-            程序员
-            设计黑客
-            艺术黑客
-            科幻作者
-            游戏设计师
-            独立开发者
-            开源项目发起人
-            老师
-            顾问
-            首席品牌官
-            首席产品官
-            增长黑客
-            专栏作者
-            `.trim().split('\n').filter(f => f), a => {
-                return {
-                    name: a.trim(),
-                    selected: Math.random() > 0.8
-                }
-            }),
-            "certifications": [{
-                "name": "MixDAO",
-                "url": "https://github.com/MixDAO-Web3",
-                "selected": true
-            }],
-            "technicalSupports": [{
-                "name": "bigan",
-                "url": "http://open.flyray.me",
-                "selected": true
-            }, {
-                "name": "anyweb",
-                "url": "https://anyweb.cc",
-                "selected": true
-            }, {
-                "name": "Stable diffusion",
-                "url": "https://github.com/CompVis/stable-diffusion",
-                "selected": true
-            }],
-            "achievements": [{
-                "name": "Hello MixDAO",
-                "text": "今天，DAO成立啦~",
-                "selected": true
-            }, {
-                "name": "AI生成挑战赛",
-                "text": "挑战自我，遇见更好的自己"
-            }, {
-                "name": "黑客马拉松",
-                "text": "一起协作，尽情创造"
-            }, {
-                "name": "乐于分享",
-                "text": "感谢你的每一次无私分享"
-            }, {
-                "name": "开拓者",
-                "text": "感谢你的每一次扩散"
-            }, {
-                "name": "共建者",
-                "text": "感谢参与建设组织"
-            }, {
-                "name": "超级个体",
-                "text": "寻找属于你的一片天地"
-            }, {
-                "name": "Mixlab创造力团队",
-                "text": "每一次协作，都代表着你的成长"
-            }, {
-                "name": "BookDAO成立运营小组",
-                "text": "成立运营小组，制定语雀共建文档，正式探索《元宇宙创意图谱》知识DAO/MixDAO运营与商业模式"
-            }, {
-                "name": "专栏作者",
-                "text": "感谢你的系统化输出"
-            }, {
-                "name": "Mix嘉宾",
-                "text": "分享无限，突破知识边界"
-            }, {
-                "name": "无边界学习者",
-                "text": "致敬跨学科、不设限的持续学习者"
-            }, {
-                "name": "提案",
-                "text": "一起见证下一个苹果和谷歌的诞生"
-            }, {
-                "name": "走访计划",
-                "text": "零距离，挖掘商业机会"
-            }, {
-                "name": "激活器",
-                "text": "负责想出点子的人，创新的ABCDEF模型的A"
-            }, {
-                "name": "虚拟空间",
-                "text": "一起探索现实与虚拟的缝隙"
-            }, {
-                "name": "开源见证",
-                "text": "一起见证开源项目的发布"
-            }, {
-                "name": "做客MixDAO",
-                "text": "寻找当代 Crypto 达芬奇"
-            }, {
-                "name": "NFT通行证",
-                "text": "DAO成员的凭证，开启DAO的神秘通道"
-            }, {
-                "name": "MetaCity启航",
-                "text": "世集文旅在2022.9.13出发,带着迷塔城,带着人类对元宇宙的期待和幻想,赋予SH1933星球一个浪漫的定义"
-            }]
+        function initConfig(){
+           return new Promise((res,rej)=>{
+                fetch('config.json').then(res=>res.json()).then(json=>{
+                    json.skills= Array.from(json.skills.filter(f => f), a => {
+                        return {
+                                name: a.trim(),
+                                selected: Math.random() > 0.8
+                            }
+                    });
+                    json.proposal=Array.from(json.proposal,p=>{
+                        return {
+                            name:p
+                        }
+                    })
+                    res(json)
+                });
+            })
         }
 
+        initConfig().then(config=>{
+                    
+            pane.addInput(window.PARAMS, 'upload', {
+                            view: 'input-image',
+                            imageFit: 'contain',
+                            label:'徽章图片'
+                            // extensions: '.svg',
+                        });
+
+            pane.addInput(window.PARAMS, 'name',{
+                label:'名称'
+            });
+            pane.addInput(window.PARAMS, 'description',{
+                label:'描述'
+            });
+            
+            
+            pane.addButton({
+                title:'打开模版'
+            }).on('click',e=> loadSvg())
+
+            pane.addInput(window.PARAMS, 'template', {
+                            view: 'input-image',
+                            imageFit: 'contain',
+                            label:'模版'
+                            // extensions: '.svg',
+                        });
+            createOptions(config.certifications, 'certifications')
+            createOptions(config.proposal, 'proposal')
+            createOptions(config.achievements, 'achievements');
+
+            createOptions(config.creators, 'creators',true)
+            createOptions(config.sponsors, 'sponsors',true)
+            createOptions(config.technicalSupports, 'technicalSupports',true);
+            createOptions(config.skills, 'skills',true);
+
+        
+            // pane.addMonitor(window.PARAMS, 'result', {
+            //         label:'元数据',
+            //         multiline: true,
+            //         lineCount: 12,
+            //     });
+
+            pane.addButton({
+                    title: '导出',
+                    label: '导出',
+                }).on('click',e=>{
+                    getResult()
+                })
+
+            createColors();
+
+        });
 
 
 
-
-        createOptions(config.creators, 'creators')
-        createOptions(config.sponsors, 'sponsors')
-        createOptions(config.proposal, 'proposal')
-            // createOptions(config.skills, 'skills')
-        createOptions(config.certifications, 'certifications')
-        createOptions(config.technicalSupports, 'technicalSupports')
-        createOptions(config.achievements, 'achievements')
-
-        createSkills(config.skills);
-
-        function createSkills(skills) {
+        function createMultipleOptions(id,objs) {
             let html = '';
 
-            for (const s of skills) {
-                html += `<option value="${s.name.trim()}" ${s.selected?'selected':''}>${s.name.trim()}</option>`;
-            }
-            document.querySelector('#skills').innerHTML = html;
+            for (const s of objs) {
+                let n={...s};
+                delete n.selected;
+                html += `<div class="tag" value='${JSON.stringify(n)}' ${s.selected?'selected':''}>${s.name.trim()}</div>`;
+            };
+            
+            document.querySelector('#pane-for-multiple .tags').innerHTML =html;
+            Array.from(document.querySelectorAll('#pane-for-multiple .tag'),t=>{
+                t.addEventListener('click',e=>{
+                    t.classList.toggle('selected');
+                    let tags=Array.from(document.querySelectorAll('#pane-for-multiple .tag'),t=>{
+                        if(t.classList.contains('selected')){
+                            let json=JSON.parse(t.getAttribute('value'));
+                            delete json.id;
+                            delete json.selected;
+                            return json
+                        }
+                    }).filter(t=>t);
+                    updateResult(id,JSON.stringify(tags));
+                })
+            })
+            
         }
 
 
-        function createOptions(objs, id) {
+        function createOptions(objs, id,multiple=false) {
 
+            let options=[];
+            let selectedValues=[];
+            // JSON.stringify({...objs[0],id});
+            // if(id==='skills'||id==="proposal") selectedValue=objs[0].name.trim();
             for (const obj of objs) {
-                let option = document.createElement('option');
+                // 注入id
+                obj.id=id;
+
                 if (obj.selected) {
-                    option.setAttribute('selected', 1);
-                    delete obj['selected']
+                    // delete obj.selected;
+                    selectedValues.push(obj);
                 };
-                option.value = typeof(obj) != 'string' ? JSON.stringify(obj) : obj;
-                option.innerText = obj.name || obj;
-                document.querySelector('#' + id).appendChild(option);
+          
+                let val=JSON.stringify(obj);
+    
+                options.push({
+                    value:val,
+                    text:obj.name
+                })
+            };
 
+            if(selectedValues.length==0) selectedValues.push(objs[0])
+            // console.log(options,id,selectedValue)
+            window.PARAMS[menuItems[id]]=JSON.stringify(selectedValues[0]);
+            
+            if(multiple){
+                window.PARAMS[menuItems[id]]=objs;
+
+                updateResult(id,JSON.stringify(selectedValues));
+
+                pane.addButton({
+                    title: '选择',
+                    label: menuItems[id],   // optional
+                    value:'333'
+                }).on('click',e=>{
+                    multiplePane.show()
+                    let label=e.target.label;
+                    // console.log(e,window.PARAMS[label])
+                    createMultipleOptions(id,window.PARAMS[label])
+                })
+
+            }else{
+
+                updateResult(id,JSON.stringify(selectedValues[0]));
+
+                pane.addBlade({
+                    view: 'list',
+                    label: menuItems[id],
+                    options,
+                    value: JSON.stringify(selectedValues[0]),
+                }).on('change',e=>{
+                    updateResult(id,e.value);
+                });
             }
-
+            
         }
 
+        
 
+        function createColors(n = 10) {
+            window._colors = []
+            // const pane = new Tweakpane.Pane();
+            let colorsMap = {};
+            Array.from(new Array(10), a => {
+                let c = randomColor();
+                colorsMap[c] = c;
+                // pane.addInput(colorsMap, c);
+                window._colors.push(c)
+            });
+            // pane.on('change', (e) => {
+            //     console.log('changed: ' + JSON.stringify(e.value));
+            // });
+        }
 
 
         // create the editor
@@ -460,22 +546,22 @@
 
         });
 
-        document.querySelector('#export').addEventListener('click', e => {
-            window.res = editor.get();
-            console.log(window.res)
-        })
+        // document.querySelector('#export').addEventListener('click', e => {
+        //     window.res = editor.get();
+        //     console.log(window.res)
+        // })
 
 
 
 
-        function getForm() {
+        function getResult(display='block') {
 
             let json = {
                 creators: [],
                 sponsors: [],
                 proposal: {},
                 skills: [],
-                certifications: [],
+                certifications: {},
                 technicalSupports: [],
                 image: '',
                 fileData: '',
@@ -483,25 +569,43 @@
                 aspectRatio: 1,
                 achievements: '',
                 // contract: '',
-                description: '',
-                name: ''
+                description: window.PARAMS.description,
+                name:window.PARAMS.name,
+                ...JSON.parse(window.PARAMS.result)
+            };
+            for (const k of ['creators','sponsors','technicalSupports']) {
+                json[k]=Array.from(json[k],c=>{
+                    delete c.id;
+                    delete c.selected;
+                    return c
+                });
             }
-            for (const key in json) {
-                let t = document.querySelector(`#${key}`);
-                if (t) json[key] = t.value;
-                if (key == 'achievements') json[key] = JSON.parse(t.value);
-                if (t && t.getAttribute('multiple') === 'multiple') {
-                    json[key] = [];
-                    for (const option of t.querySelectorAll('option')) {
-                        if (option.selected == true) {
-                            json[key].push(['certifications', 'creators', 'sponsors', 'technicalSupports'].includes(key) ? JSON.parse(option.value) : option.value);
-                        }
-                    }
-                }
-                if (key === 'aspectRatio') json[key] = parseFloat(json[key])
-            }
+            
+            json.skills=Array.from(json.skills,s=>s.name);
+            json.proposal=json.proposal.name;
+            
 
-            form2json(json)
+            editor.set(json)
+            console.log(JSON.stringify(editor.get()))
+            
+            document.querySelector('#jsoneditor').style.display=display;
+
+            // for (const key in json) {
+            //     let t = document.querySelector(`#${key}`);
+            //     if (t) json[key] = t.value;
+            //     if (key == 'achievements') json[key] = JSON.parse(t.value);
+            //     if (t && t.getAttribute('multiple') === 'multiple') {
+            //         json[key] = [];
+            //         for (const option of t.querySelectorAll('option')) {
+            //             if (option.selected == true) {
+            //                 json[key].push(['certifications', 'creators', 'sponsors', 'technicalSupports'].includes(key) ? JSON.parse(option.value) : option.value);
+            //             }
+            //         }
+            //     }
+            //     if (key === 'aspectRatio') json[key] = parseFloat(json[key])
+            // }
+
+            // form2json(json)
         }
 
 
@@ -648,8 +752,10 @@
                         var blob = ele[i].getAsFile();
                         let data = editor.get();
                         blobToDataURL(blob, base64 => {
+                            let text='';
+                            if(data.sponsors) text=data.name + ' - ' + Array.from(data.sponsors, s => s.name).join(' & ');
                             create(
-                                textParse(data.name + ' - ' + Array.from(data.sponsors, s => s.name).join(' & '))
+                                textParse(text)
                             ).then(svg => {
                                 svg = addImg(svg, base64);
 
@@ -657,7 +763,9 @@
                                     let im = new Image();
                                     im.className = 'nft-image'
                                     im.src = base64;
-                                    document.body.appendChild(im);
+                                    document.querySelector('#result').innerHTML='';
+                                    document.querySelector('#result').appendChild(im);
+                                    // window._im=im;
                                 })
                             })
                         })
@@ -670,27 +778,30 @@
             }
         }
 
+        function loadSvg(){
+            create(
+                    textParse('----------')
+                            ).then(svg => {
+                                svg2base64(svg.svg(), 'nft').then(base64 => {
+                                    let im = new Image();
+                                    im.className = 'nft-image'
+                                    im.src = base64;
+                                    // console.log(base64)
+                                    // document.body.appendChild(im);
+                                    window.PARAMS.template=im;
+                                    pane.refresh();
+                                })
+                            })
+        
+        }
+
         document.getElementById('editable').onpaste = function() {
-            getForm()
+            getResult('none')
             pasteImg(event);
             return false;
         };
-        createColors()
-
-        function createColors(n = 10) {
-            window._colors = []
-            const pane = new Tweakpane.Pane();
-            let colorsMap = {};
-            Array.from(new Array(10), a => {
-                let c = randomColor();
-                colorsMap[c] = c;
-                pane.addInput(colorsMap, c);
-                window._colors.push(c)
-            });
-            pane.on('change', (e) => {
-                console.log('changed: ' + JSON.stringify(e.value));
-            });
-        }
+        
+       
     </script>
 </body>
 
