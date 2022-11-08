@@ -48,8 +48,21 @@
             left: 0;
             user-select: none;
         }
+        #pane-for-multiple .close-btn{
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            background: black;
+            color: white;
+            text-align: center;
+            line-height: 44px;
+            bottom: 22px;
+            right: 50%;
+            cursor: pointer;
+        }
         .tags{
-            display: flex;
+            display: none;
+            flex-wrap: wrap;
             flex-direction: column;
         }
         .tag{
@@ -71,6 +84,8 @@
             top:0;
             left: 0;
             background-color: #eee;
+            width: 50% !important;
+            height: 80vh !important;
         }
         #editable{
             background-color: aquamarine;
@@ -108,10 +123,11 @@
 
     <div id="pane-for-multiple"> 
         <div class="tags"></div>
+        <div id="jsoneditor" style="width: 100%; height:100vh;"></div>
         <div class="close-btn">X</div>
     </div>
 
-    <div id="jsoneditor" style="width: 100%; height:100vh;"></div>
+    
 
     <div id="editable" contenteditable="false">
        <p>将图像粘贴到这里。</p>
@@ -276,7 +292,10 @@
                 let div=document.querySelector('#pane-for-multiple');
                 div.style.display='flex';
             },
-            hidden:()=>document.querySelector('#pane-for-multiple').style.display='none'
+            hidden:()=>document.querySelector('#pane-for-multiple').style.display='none',
+            showTags:()=>document.querySelector('#pane-for-multiple .tags').style.display='flex',
+            hiddenTags:()=>document.querySelector('#pane-for-multiple .tags').style.display='none',
+            displayJson:(d)=>document.querySelector('#jsoneditor').style.display=d,
         }
 
         multiplePane.init();
@@ -350,7 +369,7 @@
         }
 
         initConfig().then(config=>{
-                    
+            console.log(config)
             pane.addInput(window.PARAMS, 'upload', {
                             view: 'input-image',
                             imageFit: 'contain',
@@ -429,7 +448,7 @@
             for (const s of objs) {
                 let n={...s};
                 delete n.selected;
-                html += `<div class="tag" value='${JSON.stringify(n)}' ${s.selected?'selected':''}>${s.name.trim()}</div>`;
+                html += `<div class="tag ${s.selected?'selected':''}" value='${JSON.stringify(n)}'>${s.name.trim()}</div>`;
             };
             
             document.querySelector('#pane-for-multiple .tags').innerHTML =html;
@@ -486,12 +505,27 @@
                 pane.addButton({
                     title: '选择',
                     label: menuItems[id],   // optional
-                    value:'333'
+                    // value:'333'
                 }).on('click',e=>{
-                    multiplePane.show()
+
+                    multiplePane.show();
+                    multiplePane.showTags();
+                    multiplePane.displayJson('none');
+
                     let label=e.target.label;
-                    // console.log(e,window.PARAMS[label])
-                    createMultipleOptions(id,window.PARAMS[label])
+                    // console.log(JSON.parse(window.PARAMS.result)[id],window.PARAMS[label]);
+
+                    let list=[],selected=JSON.parse(window.PARAMS.result)[id];
+
+                    for (const u of window.PARAMS[label]) {
+                        u.selected=false;
+                        for (const s of selected) {
+                            if(u.name==s.name) u.selected=true;
+                        };
+                        list.push(u)
+                    }
+                    
+                    createMultipleOptions(id,list)
                 })
 
             }else{
@@ -526,6 +560,23 @@
             //     console.log('changed: ' + JSON.stringify(e.value));
             // });
         }
+
+        // 复制到剪切板
+        function copy(value) {
+            let transfer = document.createElement('input');
+            document.body.appendChild(transfer);
+            transfer.value =value;  // 这里表示想要复制的内容
+            transfer.focus();
+            transfer.select();
+            if (document.execCommand('copy')) {
+                document.execCommand('copy');
+            }
+            transfer.blur();
+            console.log('复制成功');
+            alert('已复制到剪切板')
+            document.body.removeChild(transfer);
+        }
+
 
 
         // create the editor
@@ -605,8 +656,11 @@
 
             editor.set(json)
             console.log(JSON.stringify(editor.get()))
+            copy(JSON.stringify(json))
             
-            document.querySelector('#jsoneditor').style.display=display;
+            multiplePane.show();
+            multiplePane.hiddenTags();
+            multiplePane.displayJson(display);
 
             // for (const key in json) {
             //     let t = document.querySelector(`#${key}`);
