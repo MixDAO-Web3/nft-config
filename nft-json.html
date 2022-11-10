@@ -15,6 +15,7 @@
             width: 100%;
             display: flex;
             flex-direction: column;
+            user-select: none;
         }
         
         .item {
@@ -144,6 +145,11 @@
         #result{
             width: 60%;
     min-width: 500px;
+    display: flex;
+}
+#nft-result-320{
+    width: 220px;
+    height: 220px;
 }
         
         footer{
@@ -960,6 +966,14 @@
             return base64
         }
 
+        function imgResize(img,w,h,type='png'){
+            let canvas = createCanvas(w, h)
+                let ctx = canvas.getContext('2d')
+                    ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight,0,0,w,h)
+            let base64 = canvas.toDataURL(`image/${type}`)
+            return base64
+        }
+
         function create(text = '你好呀，欢迎及爱如 基金会 mixldao mixlab  斤斤计较') {
             if (!window.PARAMS.templateSvg) return
             return parseSvg(window.PARAMS.templateSvg, text);
@@ -1044,14 +1058,25 @@
                             );
             if (svg) {
                   svg = addImg(svg, url);
-                  svg2base64(svg.svg(), 'nft').then(base64 => {
+                  svg2base64(svg.svg(), 'nft').then( base64 => {
+                                    document.querySelector('#result').innerHTML = '';
+
                                     let im = new Image();
                                     im.className = 'nft-image'
                                     im.id='nft-result';
                                     im.src = base64;
-                                    document.querySelector('#result').innerHTML = '';
+                                    im.onload=async()=>{
+                                        let s320=await imgResize(im,320,320);
+                                        let im320 = new Image();
+                                        im320.className = 'nft-image'
+                                        im320.id='nft-result-320';
+                                        im320.src = s320;
+                                        document.querySelector('#result').appendChild(im320);
+                                    }
+                                    
                                     document.querySelector('#result').appendChild(im);
-                                    // window._im=im;
+                                    
+
                })
              }
 
@@ -1061,6 +1086,8 @@
             // pane.refresh();
         
         }
+
+
 
         function loadSvg(text) {
             let svg = parseSvg(text);
