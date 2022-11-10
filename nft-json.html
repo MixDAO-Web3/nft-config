@@ -5,11 +5,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>MixAchievements</title>
 
     <style>
         body {
-            /* display: flex; */
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
         }
         
         .item {
@@ -121,11 +126,36 @@
             height: 80vh !important;
         }
         
-        #editable {
+        header {
             background-color: aquamarine;
-            width: 200px;
-            height: 200px;
-            padding: 12px;
+    width: 100%;
+    height: 10vh;
+    padding: 12px;
+        }
+        main{
+            width: 100%;
+            min-height: 80vh;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+        }
+        #result{
+            width: 60%;
+    min-width: 500px;
+}
+        
+        footer{
+            height: 10vh;
+            background-color: aquamarine;
+        }
+        footer a{
+            text-decoration: none;
+    font-size: 12px;
+    color: gray;
+    font-weight: 300;
+    
         }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsoneditor@9.9.0/dist/jsoneditor.min.css">
@@ -134,10 +164,24 @@
     <script src="https://cdn.jsdelivr.net/npm/randomcolor@0.6.2/randomColor.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tweakpane-image-plugin@1.1.3/dist/tweakpane-image-plugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@pangenerator/tweakpane-textarea-plugin@1.0.4/dist/tweakpane-textarea-plugin.min.js"></script>
+    
 
 </head>
 
-<body>
+<body id="pasteImg">
+      
+        <header>
+            <div>MixAchievements</div>
+            <div>帮助DAO成员积累声望</div>
+        </header>
+        <main>
+            <div id="result"></div>
+            <div id="tool"></div>
+        </main>
+        <footer><a href="https://github.com/MixDAO-Web3/nft-config">by shadow</a></footer>
+   
+    
 
     <div class="item" style="display:none">
         <label for="tokenIds">合约下的tokenIds查询</label>
@@ -161,14 +205,6 @@
         <div id="jsoneditor" style="width: 100%; height:100vh;"></div>
         <div class="close-btn btn">X</div>
     </div>
-
-
-
-    <div id="editable" contenteditable="false">
-        <p>将图像粘贴到这里。</p>
-    </div>
-
-    <div id="result"></div>
 
     <div class="" style="display:none">
         <div class="item">
@@ -294,10 +330,19 @@
             result: "{}"
         };
         // window.RESULT={};
+        
+
+        let pane = initPanePlugin();
 
 
-        let pane = new Tweakpane.Pane();
-        pane.registerPlugin(TweakpaneImagePlugin);
+        function initPanePlugin(){
+            let p=new Tweakpane.Pane({
+                container:document.querySelector('#tool')
+            });
+            p.registerPlugin(TweakpaneImagePlugin);
+            p.registerPlugin(TweakpaneTextareaPlugin);
+            return p
+        }
 
         const menuItems = {
             "creators": "创作者",
@@ -417,11 +462,13 @@
                 pages: [
                     {title: '徽章制作'},
                     {title: '自定义'},
+                    {title: '海报生成'}
                 ],
             });
            
             initNFTConfig(tab.pages[0],config);
             initSetup(tab.pages[1],config);
+            initPoster(tab.pages[2]);
         }
 
         function initNFTConfig(page,config){
@@ -432,9 +479,9 @@
                 label: '徽章图片'
                     // extensions: '.svg',
             }).on('change',async e=>{
-                console.log(e)
-                if(e.presetKey==='upload'){
-                    // console.log(e.value)
+                // console.log(e)
+                if(e.presetKey==='upload' &&e.value.naturalWidth!=128&&e.value.naturalHeight!=64){
+                    console.log(e.value.naturalWidth,e.value.naturalHeight)
                     // document.body.appendChild(e.value)
                     getResult('none');
                     let data = editor.get();
@@ -448,11 +495,18 @@
             createOptions(page,config.achievements, 'achievements');
 
             page.addInput(window.PARAMS, 'name', {
-                label: '名称'
+                view: 'textarea',
+                label: '名称',
+                lineCount: 6,
+                placeholder: '输入成就',
             });
             page.addInput(window.PARAMS, 'description', {
-                label: '描述'
+                view: 'textarea',
+                label: '描述',
+                lineCount: 6,
+                placeholder: '输入详细描述'
             });
+          
 
             createOptions(page,config.creators, 'creators', true);
             
@@ -494,9 +548,8 @@
                             
                            //更新配置
                            pane.dispose();
-
-                           pane = new Tweakpane.Pane();
-                           pane.registerPlugin(TweakpaneImagePlugin);
+                           // 更新    
+                           pane = initPanePlugin();
 
                            createPane(JSON.parse(this.result))
                         };
@@ -552,19 +605,47 @@
 
         }
 
-        initConfig().then(config => createPane(config));
+        function initPoster(page){
+             fetch('nft-event.svg').then(res=>res.text()).then(text=>{
+                // console.log(text)
+                window._nftPosterSvg=text;
+                // window._p=text;
+                let svg=parseSvg(text);
+                console.log(svg)
+                // 'qrcode','img','talk-01','talk-02','host-01','time',''
+                // if (svg) {
+                // // url 是生成好 的徽章
+                //     svg = addImg(svg, document.querySelector('#nft-result').src);
+                //     svg2base64(svg.svg(), 'nft').then(base64 => {
+                //                         let im = new Image();
+                //                         im.className = 'nft-image'
+                //                         im.src = base64;
+                //                         document.querySelector('#result').innerHTML = '';
+                //                         document.querySelector('#result').appendChild(im);
+                //                         // window._im=im;
+                // })
+                // }
+            });
+
+        }
+
+        initConfig().then(config => {
+            createColors();
+            // 默认的模板
+            fetch('01.svg').then(res => res.text()).then(text => {
+                    window.PARAMS.templateSvg = text;
+                    loadSvg(window.PARAMS.templateSvg)
+                    createPane(config);
+                });
+            });
+            
 
         function createPane(config){
             // console.log(config)
             config=parseConfig(config);
             
             initPane(config);
-            // 默认的模板
-            fetch('01.svg').then(res => res.text()).then(text => {
-                window.PARAMS.templateSvg = text;
-                // loadSvg(window.PARAMS.templateSvg)
-            })
-            createColors();
+            
         }
 
 
@@ -676,7 +757,7 @@
         }
 
 
-
+        // 随机颜色
         function createColors(n = 10) {
             window._colors = []
                 // const pane = new Tweakpane.Pane();
@@ -885,14 +966,15 @@
         }
 
 
+        // 
         function parseSvg(t, text = "") {
             let s = SVG();
             s.svg(t);
             let svg = s.children()[0];
 
-            if (svg.findOne('#font')) svg.findOne('#font').attr('startOffset', Math.round(Math.random() * 200)).text(text);
+            if (svg.findOne('#nft-text')) svg.findOne('#nft-text').attr('startOffset', Math.round(Math.random() * 200)).text(text);
 
-            if (svg.findOne('#board-02')) svg.findOne('#board-02').attr('stroke', window._colors[Math.round(Math.random() * 10)]);
+            if (svg.findOne('#color-stroke')) svg.findOne('#color-stroke').attr('stroke', window._colors[Math.round(Math.random() * 10)]);
 
             // 为了保证正常导出base64
             let ks = ['text', 'textPath', 'tspan']
@@ -941,6 +1023,7 @@
                         let data = editor.get();
                         // console.log(blob)
                         blobToDataURL(blob, base64 => {
+                            // window._test=base64;
                             createNFT(base64,data);
                         })
                     }
@@ -953,7 +1036,7 @@
 
         function createNFT(url,data){
             // console.log(url)
-            if(!(data.name!=''&&data.description!=''))return;
+            if(!(data.name!=''&&data.description!=''))return alert('请输入名称和描述');
             let text = '';
             if (data.sponsors) text = data.name + ' - ' + Array.from(data.sponsors, s => s.name).join(' & ');
 
@@ -964,6 +1047,7 @@
                   svg2base64(svg.svg(), 'nft').then(base64 => {
                                     let im = new Image();
                                     im.className = 'nft-image'
+                                    im.id='nft-result';
                                     im.src = base64;
                                     document.querySelector('#result').innerHTML = '';
                                     document.querySelector('#result').appendChild(im);
@@ -980,18 +1064,16 @@
 
         function loadSvg(text) {
             let svg = parseSvg(text);
-            // console.log(svg);
             svg2base64(svg.svg(), 'nft').then(base64 => {
                 let im = new Image();
                 im.className = 'nft-image'
                 im.src = base64;
                 window.PARAMS.template = im;
-                // window.PARAMS.svg=svg;
-                // pane.refresh();
+                pane.refresh();
             })
         }
 
-        document.getElementById('editable').onpaste = function() {
+        document.getElementById('pasteImg').onpaste = function() {
             getResult('none')
             pasteImg(event);
             return false;
