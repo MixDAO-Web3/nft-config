@@ -40,6 +40,7 @@
         .nft-image {
             width: 400px;
             height: 400px;
+            margin: 8px;
         }
         
         .tp-dfwv {
@@ -95,7 +96,13 @@
             text-align: center;
             cursor: pointer;
         }
-        
+        .template-svg{
+            width: 200px;
+    height: 200px;
+    outline: 1px solid gray;
+    cursor: pointer;
+    margin: 24px;
+        }
         #new-item {
             display: none;
             width: 100%;
@@ -366,6 +373,9 @@
             "aspectRatio": "宽高比"
         }
 
+        const templates=['01.svg','02.svg'];
+        window.templateSvgIndex=0;
+
         // 模态框
         const multiplePane = {
             init: () => {
@@ -485,9 +495,9 @@
                 label: '徽章图片'
                     // extensions: '.svg',
             }).on('change',async e=>{
-                // console.log(e)
-                if(e.presetKey==='upload' &&e.value.naturalWidth!=128&&e.value.naturalHeight!=64){
-                    console.log(e.value.naturalWidth,e.value.naturalHeight)
+                // console.log(e.value)
+                if(e.presetKey==='upload' &&e.value.naturalWidth&&e.value.naturalWidth!=128&&e.value.naturalHeight!=64){
+                    // console.log(e.value.naturalWidth,e.value.naturalHeight)
                     // document.body.appendChild(e.value)
                     getResult('none');
                     let data = editor.get();
@@ -572,6 +582,12 @@
                 let url=str2URL(JSON.stringify(window._json,null,2),'application/json');
                 downloadFile(url,window._json.description+"_"+window._json.version+'.json')
             });
+            f1.addSeparator();
+            createOptions(f1,config.certifications, 'certifications')
+            createOptions(f1,config.proposal, 'proposal')
+            createOptions(f1,config.sponsors, 'sponsors', true)
+            createOptions(f1,config.technicalSupports, 'technicalSupports', true);
+            createOptions(f1,config.skills, 'skills', true);
 
 
             f2.addButton({
@@ -596,6 +612,18 @@
                 })
             });
 
+            f2.addButton({
+                title: '导出',
+                label:'默认文件'
+            }).on('click', e => {
+                // console.log(window._json)
+                let url=str2URL(window.PARAMS.templateSvg,'image/svg+xml');
+                let svg = parseSvg(window.PARAMS.templateSvg);
+                let title=svg.findOne('title');
+                if(title) title=title.node.innerHTML.trim();
+                downloadFile(url,(title||'template')+'.svg')
+            });
+
             f2.addInput(window.PARAMS, 'template', {
                 view: 'input-image',
                 imageFit: 'contain',
@@ -603,11 +631,47 @@
                     // extensions: '.svg',
             });
 
-            createOptions(page,config.certifications, 'certifications')
-            createOptions(page,config.proposal, 'proposal')
-            createOptions(page,config.sponsors, 'sponsors', true)
-            createOptions(page,config.technicalSupports, 'technicalSupports', true);
-            createOptions(page,config.skills, 'skills', true);
+            f2.addButton({
+                title: '更多',
+                label:'选择'
+            }).on('click', async e => {
+                multiplePane.show();
+                multiplePane.showTags();
+                // 
+                let tags=document.querySelector('#pane-for-multiple .tags');
+                tags.innerHTML = '';
+                for (let index = 0; index < templates.length; index++) {
+                    const url = templates[index];
+                
+                    let svg=await (await fetch(url)).text();
+                    let im=await svg2img(svg,'template-svg')
+                    tags.appendChild(im);
+                    im.addEventListener('click',e=>{
+                        window.templateSvgIndex=index;
+                        fetch(templates[window.templateSvgIndex]).then(res => res.text()).then(text => {
+                            window.PARAMS.templateSvg = text;
+                            loadSvg(window.PARAMS.templateSvg);
+                        });
+                        multiplePane.hidden();
+                    })
+                }
+                
+                // Array.from(document.querySelectorAll('#pane-for-multiple .tag'), t => {
+                //     t.addEventListener('click', e => {
+                //         t.classList.toggle('selected');
+                //         let tags = Array.from(document.querySelectorAll('#pane-for-multiple .tag'), t => {
+                //             if (t.classList.contains('selected')) {
+                //                 let json = JSON.parse(t.getAttribute('value'));
+                //                 delete json.id;
+                //                 delete json.selected;
+                //                 return json
+                //             }
+                //         }).filter(t => t);
+                //         updateResult(id, JSON.stringify(tags));
+                //     })
+                // })
+
+            });
 
         }
 
@@ -638,7 +702,7 @@
         initConfig().then(config => {
             createColors();
             // 默认的模板
-            fetch('01.svg').then(res => res.text()).then(text => {
+            fetch(templates[window.templateSvgIndex]).then(res => res.text()).then(text => {
                     window.PARAMS.templateSvg = text;
                     loadSvg(window.PARAMS.templateSvg)
                     createPane(config);
@@ -986,7 +1050,7 @@
             s.svg(t);
             let svg = s.children()[0];
 
-            if (svg.findOne('#nft-text')) svg.findOne('#nft-text').attr('startOffset', Math.round(Math.random() * 200)).text(text);
+            if (svg.findOne('#nft-text')&&text&&text!="") svg.findOne('#nft-text').attr('startOffset', Math.round(Math.random() * 200)).text(text);
 
             if (svg.findOne('#color-stroke')) svg.findOne('#color-stroke').attr('stroke', window._colors[Math.round(Math.random() * 10)]);
 
@@ -1050,7 +1114,7 @@
 
         function createNFT(url,data){
             // console.log(url)
-            if(!(data.name!=''&&data.description!=''))return alert('请输入名称和描述');
+            if(!(data.name!=''))return alert('请输入名称');
             let text = '';
             if (data.sponsors) text = data.name + ' - ' + Array.from(data.sponsors, s => s.name).join(' & ');
 
@@ -1087,17 +1151,28 @@
         
         }
 
-
+        // svg 转 img base64
+        function svg2img(tx,className='nft-image'){
+            return new Promise((res,rej)=>{
+                let svg = parseSvg(tx);
+                svg2base64(svg.svg(), 'png').then(base64 => {
+                    let im = new Image();
+                    im.className = className;
+                    im.src = base64;
+                    res(im)
+                })
+            })
+            
+        }
 
         function loadSvg(text) {
-            let svg = parseSvg(text);
-            svg2base64(svg.svg(), 'nft').then(base64 => {
-                let im = new Image();
-                im.className = 'nft-image'
-                im.src = base64;
-                window.PARAMS.template = im;
-                pane.refresh();
-            })
+            return new Promise((res,rej)=>{
+                svg2img(text,'nft-image').then(im=>{
+                    window.PARAMS.template = im;
+                    pane.refresh();
+                    res();
+                })
+            });
         }
 
         document.getElementById('pasteImg').onpaste = function() {
