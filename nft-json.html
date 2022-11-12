@@ -516,11 +516,14 @@
                 // console.log(e.value)
                 if (e.presetKey === 'upload' && e.value.naturalWidth) {
                     // console.log(e.value.naturalWidth,e.value.naturalHeight)
-                    // document.body.appendChild(e.value)
+
                     getResult('none');
                     let data = editor.get();
                     let base64 = img2base64(e.value, e.value.naturalWidth, e.value.naturalHeight, 'png');
                     createNFT(base64, data)
+                        // 更新预览
+                        // window.PARAMS.upload = new Image();
+                        // window.PARAMS.upload.src = base64;
 
                 }
             });
@@ -533,10 +536,10 @@
                 lineCount: 6,
                 placeholder: '输入成就',
             }).on('change', e => {
-                getResult('none');
-                let data = editor.get();
-                let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
-                createNFT(base64, data)
+                // getResult('none');
+                // let data = editor.get();
+                // let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
+                // createNFT(base64, data)
 
             })
             page.addInput(window.PARAMS, 'description', {
@@ -549,7 +552,21 @@
 
             createOptions(page, config.creators, 'creators', true);
 
-            page.addButton({
+            page.addSeparator();
+            const f2 = page.addFolder({
+                title: '结果',
+            });
+            f2.addButton({
+                title: '生成',
+                label: '徽章',
+            }).on('click', e => {
+                // 更新图片
+                getResult('none');
+                let data = editor.get();
+                let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
+                createNFT(base64, data)
+            })
+            f2.addButton({
                 title: '导出',
                 label: '导出',
             }).on('click', e => {
@@ -1165,8 +1182,12 @@
                         let data = editor.get();
                         // console.log(blob)
                         blobToDataURL(blob, base64 => {
-                            // window._test=base64;
+
                             createNFT(base64, data);
+                            // 更新预览
+                            window.PARAMS.upload = new Image();
+                            window.PARAMS.upload.src = base64;
+                            pane.refresh()
                         })
                     }
 
@@ -1215,9 +1236,7 @@
                 })
             }
 
-            // 更新预览
-            window.PARAMS.upload = new Image();
-            window.PARAMS.upload.src = url;
+
             // pane.refresh();
 
         }
