@@ -184,7 +184,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.1.0/dist/tweakpane.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tweakpane-image-plugin@1.1.3/dist/tweakpane-image-plugin.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@pangenerator/tweakpane-textarea-plugin@1.0.4/dist/tweakpane-textarea-plugin.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 
 </head>
 
@@ -966,13 +966,19 @@
 
             editor.set(json)
                 // console.log(JSON.stringify(editor.get()))
-            if (display !== 'none') {
-                copy(JSON.stringify(json));
-                multiplePane.show();
-                multiplePane.hiddenTags();
+            if (display !== 'none' && json.name && document.querySelector('#nft-result') && document.querySelector('#nft-result-320')) {
+                // copy(JSON.stringify(json));
+                exportResult(
+                    json.name,
+                    JSON.stringify(json),
+                    document.querySelector('#nft-result').src.replace('data:image/png;base64,', ''),
+                    document.querySelector('#nft-result-320').src.replace('data:image/png;base64,', '')
+                );
+                // multiplePane.show();
+                // multiplePane.hiddenTags();
             }
 
-            multiplePane.displayJson(display);
+            // multiplePane.displayJson(display);
         }
 
 
@@ -984,18 +990,20 @@
         async function uploadFileData() {
             return await upload(document.getElementById("fileData-input"))
         }
-        async function uploadImage() {
-            return await upload(document.getElementById("image-input"))
+        async function uploadImage(base64) {
+            var blob = base64toBlob(base64);
+            var file = blobToFile(blob, 'image');
+            return await upload(file)
         }
-        async function upload(ip) {
+        async function upload(file) {
 
-            if (ip.files.length === 0) {
+            if (!file.size) {
                 alert("请选择上传文件")
                 return false;
             }
 
             const formData = new FormData();
-            formData.append("file", ip.files[0]);
+            formData.append("file", file);
             const url = "http://114.116.93.253:8097/ipfsUpload";
             const res = await fetch(url, {
                 method: "POST",
@@ -1005,6 +1013,29 @@
             return await res.json();
 
         }
+
+        function base64toBlob(dataurl) {
+            var arr = dataurl.split(','),
+                mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]),
+                n = bstr.length,
+                u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], {
+                type: mime
+            });
+        }
+        //将blob转换为file
+        function blobToFile(theBlob, fileName) {
+            theBlob.lastModifiedDate = new Date();
+            theBlob.name = fileName;
+            return theBlob;
+        }
+
+
+
 
         function str2URL(data, type) {
             // svg "image/svg+xml;charset=utf-8" 
@@ -1168,16 +1199,18 @@
                         im320.className = 'nft-image'
                         im320.id = 'nft-result-320';
                         im320.src = s320;
-                        document.querySelector('#result').appendChild(im320);
-                        im320.addEventListener('click', e => {
-                            downloadFile(s320, 'nft-320.png')
-                        })
-                    }
-                    im.addEventListener('click', e => {
-                        downloadFile(base64, 'nft-orign.png')
-                    })
-                    document.querySelector('#result').appendChild(im);
+                        if (document.querySelector('#result').children.length === 0) {
+                            document.querySelector('#result').appendChild(im320);
+                            document.querySelector('#result').appendChild(im);
+                            im.addEventListener('click', e => {
+                                downloadFile(base64, 'nft_2048.png')
+                            })
+                            im320.addEventListener('click', e => {
+                                downloadFile(s320, 'nft_320.png')
+                            })
+                        }
 
+                    }
 
                 })
             }
@@ -1189,6 +1222,25 @@
 
         }
 
+        function exportResult(name, jsonStr, base64_2048, base64_320) {
+            const zip = new JSZip();
+
+            zip.file("metadata.json", jsonStr);
+
+            const img = zip.folder("images");
+            img.file("nft_2048.png", base64_2048, {
+                base64: true
+            });
+            img.file("nft_320.png", base64_320, {
+                base64: true
+            });
+            zip.generateAsync({
+                    type: "base64"
+                })
+                .then(function(content) {
+                    downloadFile("data:application/zip;base64," + content, name + '.zip')
+                });
+        }
         // svg 转 img base64
         function svg2img(tx, className = 'nft-image') {
             return new Promise((res, rej) => {
