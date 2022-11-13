@@ -566,12 +566,21 @@
                 let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
                 createNFT(base64, data)
             })
+
+            f2.addButton({
+                title: '拷贝',
+                label: '元数据',
+            }).on('click', e => {
+                getResult('block', 'metadata')
+            })
+
             f2.addButton({
                 title: '导出',
                 label: '导出',
             }).on('click', e => {
                 getResult()
             })
+
 
 
         }
@@ -950,7 +959,7 @@
 
 
 
-        function getResult(display = 'block') {
+        function getResult(display = 'block', type) {
 
             let json = {
                 creators: [],
@@ -983,19 +992,25 @@
 
             editor.set(json)
                 // console.log(JSON.stringify(editor.get()))
-            if (display !== 'none' && json.name && document.querySelector('#nft-result') && document.querySelector('#nft-result-320')) {
-                // copy(JSON.stringify(json));
+            if (display !== 'none' && type != 'metadata' && json.name && document.querySelector('#nft-result') && document.querySelector('#nft-result-320')) {
+
                 exportResult(
                     json.name,
                     JSON.stringify(json),
                     document.querySelector('#nft-result').src.replace('data:image/png;base64,', ''),
                     document.querySelector('#nft-result-320').src.replace('data:image/png;base64,', '')
                 );
-                // multiplePane.show();
-                // multiplePane.hiddenTags();
+
+
+            }
+            if (type == 'metadata') {
+                copy(JSON.stringify(json));
+                multiplePane.show();
+                multiplePane.hiddenTags();
+                multiplePane.displayJson(display);
             }
 
-            // multiplePane.displayJson(display);
+
         }
 
 
