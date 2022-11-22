@@ -356,11 +356,14 @@
             description: '',
             name: '',
             image: '',
+            nft_2048:'',
+            nft_320:'',
             // 模版图片
             template: '',
             // 素材图片
             upload: '',
-            result: "{}"
+            result: "{}",
+            init:false
         };
         // window.RESULT={};
 
@@ -410,7 +413,10 @@
             hidden: () => document.querySelector('#pane-for-multiple').style.display = 'none',
             showTags: () => document.querySelector('#pane-for-multiple .tags').style.display = 'flex',
             hiddenTags: () => document.querySelector('#pane-for-multiple .tags').style.display = 'none',
-            displayJson: (d) => document.querySelector('#jsoneditor').style.display = d
+            displayJson: (d) => document.querySelector('#jsoneditor').style.display = d,
+            displayIPFSUrl:url=>{
+                document.querySelector('#pane-for-multiple .tags').innerText=url;
+            }
         }
 
         multiplePane.init();
@@ -418,18 +424,52 @@
 
         const updateResult = (id, val) => {
             let res = JSON.parse(window.PARAMS.result);
-            res[id] = JSON.parse(val);
-            delete res[id].selected;
-            delete res[id].id;
+            
+            if(id=='name'||id=='description'){
+               if(id=='name') {
+                    window.PARAMS.name=val;
+                    res.name=window.PARAMS.name;
+                };
+                if(id=='description') {
+                    window.PARAMS.description=val;
+                    res.description=window.PARAMS.description;
+                };
+               
+              
+                // pane.refresh();
+            }else if(id=='fileData'||id=='image'){
+                let data=JSON.parse(val);
+                res={...res,...data};
+                // res.fileData=data.fileData;
+                // res.filetype=data.filetype
+                // image,aspectRatio
+            }else{
+                res[id] = JSON.parse(val);
+                delete res[id].selected;
+                delete res[id].id;
+            }
+            
+            // 填充name 和description的默认值
+            if(id==='achievements'){
+                window.PARAMS.description=res[id].text;
+                res.description=window.PARAMS.description;
+               
+                window.PARAMS.name=res[id].name;
+                res.name=window.PARAMS.name;
+              
+                pane.refresh();
+            }
+
             window.PARAMS.result = JSON.stringify(res, null, 2);
-            // console.log(id)
+            // console.log(id,res[id])
             //  更新了赞助方需要更新图片
             if (id === 'sponsors') {
                 getResult('none');
                 let data = editor.get();
                 let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
                 createNFT(base64, data)
-            }
+            };
+            
         }
 
 
@@ -509,14 +549,16 @@
                     title: '徽章制作'
                 }, {
                     title: '自定义'
-                }, {
-                    title: '海报生成'
-                }],
+                }, 
+                // {
+                //     title: '海报生成'
+                // }
+            ],
             });
 
             initNFTConfig(tab.pages[0], config);
             initSetup(tab.pages[1], config);
-            initPoster(tab.pages[2]);
+            // initPoster(tab.pages[2]);
         }
 
         function initNFTConfig(page, config) {
@@ -554,6 +596,8 @@
                 // let data = editor.get();
                 // let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
                 // createNFT(base64, data)
+                // console.log(e)
+                updateResult('name',e.value);
 
             })
             page.addInput(window.PARAMS, 'description', {
@@ -561,6 +605,8 @@
                 label: '描述',
                 lineCount: 6,
                 placeholder: '输入详细描述'
+            }).on('change', e => {
+                updateResult('description',e.value);
             });
 
 
@@ -574,12 +620,24 @@
                 title: '生成',
                 label: '徽章',
             }).on('click', e => {
+                window.PARAMS.init=true;
                 // 更新图片
                 getResult('none');
                 let data = editor.get();
                 let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
-                createNFT(base64, data)
-            })
+                createNFT(base64, data);
+            });
+
+            f2.addMonitor(window.PARAMS, 'nft_2048', {
+                multiline: true,
+                lineCount: 2,
+                label:'fileData/源文件'
+            });
+            f2.addMonitor(window.PARAMS, 'image', {
+                multiline: true,
+                lineCount: 2,
+                label:'封面'
+            });
 
             f2.addButton({
                 title: '拷贝',
@@ -889,6 +947,7 @@
                     value: JSON.stringify(selectedValues[0]),
                 }).on('change', e => {
                     updateResult(id, e.value);
+                    // console.log(e)
                 });
             }
 
@@ -1021,7 +1080,16 @@
                 copy(JSON.stringify(json));
                 multiplePane.show();
                 multiplePane.hiddenTags();
-                multiplePane.displayJson(display);
+                // multiplePane.displayJson(display);
+                multiplePane.displayJson('none');
+                // TODO ipfs上传
+                const file = new File([JSON.stringify(json)], "metadata.json", {
+                    type: "application/Json",
+                });
+                uploadFile(file).then(res=>{
+                    multiplePane.showTags();
+                    multiplePane.displayIPFSUrl(res.data.fileUrl)
+                })
             }
 
 
@@ -1034,14 +1102,14 @@
         //post http://114.116.93.253:8097/ipfsUpload
 
         async function uploadFileData() {
-            return await upload(document.getElementById("fileData-input"))
+            return await uploadFile(document.getElementById("fileData-input").files[0])
         }
-        async function uploadImage(base64) {
-            var blob = base64toBlob(base64);
-            var file = blobToFile(blob, 'image');
-            return await upload(file)
+        async function uploadImage(base64,fileName='image') {
+            // var blob = base64toBlob(base64);
+            var file = base64toFile(base64,fileName);
+            return await uploadFile(file)
         }
-        async function upload(file) {
+        async function uploadFile(file) {
 
             if (!file.size) {
                 alert("请选择上传文件")
@@ -1050,35 +1118,39 @@
 
             const formData = new FormData();
             formData.append("file", file);
-            const url = "http://114.116.93.253:8097/ipfsUpload";
+            const url = "http://69.235.172.107:8097/ipfsUpload";
             const res = await fetch(url, {
                 method: "POST",
                 body: formData //自动修改请求头,formdata的默认请求头的格式是 multipart/form-data
-            })
+            });
 
-            return await res.json();
+            let data=await res.json();
+            // 文件类型
+            data.data.type=file.type;
+
+            return data;
 
         }
 
-        function base64toBlob(dataurl) {
+        function base64toFile(dataurl,fileName='image') {
             var arr = dataurl.split(','),
                 mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]),
+                bstr = window.atob(arr[1]),
                 n = bstr.length,
                 u8arr = new Uint8Array(n);
             while (n--) {
                 u8arr[n] = bstr.charCodeAt(n);
             }
-            return new Blob([u8arr], {
+            return new File([u8arr], fileName+'.'+mime.replace(/.*\//ig,''),{
                 type: mime
             });
         }
         //将blob转换为file
-        function blobToFile(theBlob, fileName) {
-            theBlob.lastModifiedDate = new Date();
-            theBlob.name = fileName;
-            return theBlob;
-        }
+        // function blobToFile(theBlob, fileName) {
+        //     theBlob.lastModifiedDate = new Date();
+        //     theBlob.name = fileName;
+        //     return theBlob;
+        // }
 
 
 
@@ -1228,6 +1300,7 @@
 
         function createNFT(url, data) {
             // console.log(data)
+
             if (!url) return
                 // if (!(data.name != '')) return alert('请输入名称');
             let text = data.name;
@@ -1244,6 +1317,7 @@
                     im.id = 'nft-result';
                     im.src = base64;
                     im.onload = async() => {
+                         
                         let s320 = await imgResize(im, 320, 320);
                         let im320 = new Image();
                         im320.className = 'nft-image'
@@ -1257,7 +1331,27 @@
                             })
                             im320.addEventListener('click', e => {
                                 downloadFile(s320, 'nft_320.png')
+                            });
+
+                            // 当点过生成后才可以上传
+                            if(window.PARAMS.init)  uploadImage(s320,im320.id+'.png').then(r320=>{
+                                window.PARAMS.image=r320.data.fileUrl;
+                                uploadImage(base64,im.id+'.png').then(r=>{
+                                    window.PARAMS.nft_2048=r.data.fileUrl;
+                                    // pane.refresh();
+                                    updateResult('image',JSON.stringify({
+                                        image:window.PARAMS.image,
+                                        aspectRatio:1
+                                    }));
+
+                                    updateResult('fileData',JSON.stringify({
+                                        fileData:window.PARAMS.nft_2048,
+                                        filetype:r.data.type
+                                    }));
+
+                                })
                             })
+                            
                         }
 
                     }
