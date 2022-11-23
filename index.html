@@ -1348,7 +1348,7 @@
 
             const formData = new FormData();
             formData.append("file", file);
-            const url = "http://69.235.172.107:8097/ipfsUpload";
+            const url = "https://69.235.172.107:8097/ipfsUpload";
             const res = await fetch(url, {
                 method: "POST",
                 body: formData //自动修改请求头,formdata的默认请求头的格式是 multipart/form-data
