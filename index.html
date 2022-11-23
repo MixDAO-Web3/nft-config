@@ -823,10 +823,12 @@
                             let json = JSON.parse(this.result);
                             json.template = window.PARAMS.templateSvg;
                             uploadJsonFile(json, `config_${json.description}_${json.version}`).then(res => {
-                                console.log(res.data.Hash)
-                                updateLocationUrl({
-                                    id: res.data.Hash
-                                });
+                                if (res.data) {
+                                    console.log(res.data.Hash)
+                                    updateLocationUrl({
+                                        id: res.data.Hash
+                                    });
+                                }
                             })
                             createPane(json, true);
                         };
@@ -873,10 +875,12 @@
                             json.template = window.PARAMS.templateSvg;
 
                             uploadJsonFile(json, `config_${json.description}_${json.version}`).then(res => {
-                                console.log(res.data.Hash)
-                                updateLocationUrl({
-                                    id: res.data.Hash
-                                });
+                                if (res.data) {
+                                    console.log(res.data.Hash)
+                                    updateLocationUrl({
+                                        id: res.data.Hash
+                                    });
+                                }
                             })
 
                             // uploadSvgFile(window.PARAMS.templateSvg,'nft-template').then(res=>{
@@ -1340,7 +1344,7 @@
             })
         }
         async function uploadFile(file) {
-
+            console.log(file)
             if (!file.size) {
                 alert("请选择上传文件")
                 return false;
@@ -1348,7 +1352,7 @@
 
             const formData = new FormData();
             formData.append("file", file);
-            const url = "https://69.235.172.107:8097/ipfsUpload";
+            const url = window.location.protocol + "//69.235.172.107:8097/ipfsUpload";
             const res = await fetch(url, {
                 method: "POST",
                 body: formData //自动修改请求头,formdata的默认请求头的格式是 multipart/form-data
@@ -1356,7 +1360,7 @@
 
             let data = await res.json();
             // 文件类型
-            data.data.type = file.type;
+            if (data.data) data.data.type = file.type;
 
             return data;
 
