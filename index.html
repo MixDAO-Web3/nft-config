@@ -822,6 +822,8 @@
 
                             let json = JSON.parse(this.result);
                             json.template = window.PARAMS.templateSvg;
+                            createPane(json, true);
+
                             uploadJsonFile(json, `config_${json.description}_${json.version}`).then(res => {
                                 if (res.data) {
                                     console.log(res.data.Hash)
@@ -830,7 +832,7 @@
                                     });
                                 }
                             })
-                            createPane(json, true);
+
                         };
                         reader.readAsText(file);
                     }
@@ -873,6 +875,7 @@
 
                             let json = getConfigFromLocal();
                             json.template = window.PARAMS.templateSvg;
+                            loadSvg(window.PARAMS.templateSvg)
 
                             uploadJsonFile(json, `config_${json.description}_${json.version}`).then(res => {
                                 if (res.data) {
@@ -889,7 +892,7 @@
                             //         template:res.data.Hash
                             //     });
                             // })
-                            loadSvg(window.PARAMS.templateSvg)
+
                         };
                         reader.readAsText(file);
                     }
