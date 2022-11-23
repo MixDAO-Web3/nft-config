@@ -57,6 +57,7 @@
             top: 0;
             left: 0;
             user-select: none;
+            justify-content: flex-end;
         }
         
         #pane-for-multiple .close-btn {
@@ -89,6 +90,7 @@
             display: none;
             flex-wrap: wrap;
             flex-direction: column;
+            width: 100%;
         }
         
         .tag {
@@ -106,6 +108,7 @@
             outline: 1px solid #eee;
             margin: 24px;
             background-color: #fff;
+            width: fit-content;
         }
         
         .template-svg-img {
@@ -486,6 +489,7 @@
             "aspectRatio": "宽高比"
         }
 
+        //TODO  动态更新
         const templates = [{
             type: 'url',
             data: '01.svg'
@@ -496,6 +500,7 @@
             type: 'url',
             data: '03.svg'
         }, ...loadTemplateSvgs()].filter(f => f);
+
         window.templateSvgIndex = 0;
 
         // 模态框
@@ -504,6 +509,8 @@
                 document.querySelector('#pane-for-multiple .close-btn').addEventListener('click', e => {
                     multiplePane.hidden();
                     multiplePane.displaySetup('none');
+                    multiplePane.hiddenTags();
+                    multiplePane.displayJson('none')
                 });
             },
             show: () => {
@@ -1024,8 +1031,8 @@
             }
             // 默认的模板
             window.PARAMS.templateSvg = await loadSvgByType(templateObj)
-            loadSvg(window.PARAMS.templateSvg)
-            createPane(config);
+            loadSvg(window.PARAMS.templateSvg);
+            createPane(config, true);
         });
 
 
