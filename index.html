@@ -61,12 +61,12 @@
         
         #pane-for-multiple .close-btn {
             position: absolute;
-    bottom: 22px;
-    right: 50%;
-    color: black;
-    background: #eee;
-    outline: 1px solid white;
-    line-height: 48px;
+            bottom: 22px;
+            right: 50%;
+            color: black;
+            background: #eee;
+            outline: 1px solid white;
+            line-height: 48px;
         }
         
         #pane-for-multiple #add-btn {
@@ -102,17 +102,19 @@
             cursor: pointer;
         }
         
-        .template-svg{
+        .template-svg {
             outline: 1px solid #eee;
             margin: 24px;
             background-color: #fff;
         }
+        
         .template-svg-img {
             width: 200px;
             height: 200px;
             cursor: pointer;
         }
-        .template-svg h4{
+        
+        .template-svg h4 {
             margin: 8px;
         }
         
@@ -146,8 +148,8 @@
             width: 50% !important;
             height: 80vh !important;
         }
-
-        header{
+        
+        header {
             background-color: black;
             color: white;
             display: flex;
@@ -156,7 +158,6 @@
         }
         
         header .logo {
-           
             width: 100%;
             height: 10vh;
             padding: 16px;
@@ -164,23 +165,28 @@
             justify-content: start;
             align-items: center;
         }
-        header #setup{
+        
+        header #setup {
             height: 32px;
-    width: 32px;
-    line-height: 0;
-    border: none;
-    outline: none;
-    margin-right: 12px;
-    background: black;
-    color: #00bcd4;
+            width: 32px;
+            line-height: 0;
+            border: none;
+            outline: none;
+            margin-right: 12px;
+            background: black;
+            color: #00bcd4;
         }
-        header .info{
+        
+        header .info {
             font-size: 12px;
         }
-        header h4,p{
+        
+        header h4,
+        p {
             margin: 0;
         }
-        #mix-description{
+        
+        #mix-description {
             margin-right: 44px;
             margin-left: 12px;
         }
@@ -230,7 +236,6 @@
         footer a:hover {
             color: wheat;
         }
-
         /* #setup-modal{
             width: 100%;
             height: 100vh;
@@ -239,15 +244,17 @@
             top:0;
             left:0;
         } */
-        #setup-pane{
+        
+        #setup-pane {
             display: none;
             width: 500px;
             /* display: flex; */
-    justify-content: center;
-    align-items: center;
+            justify-content: center;
+            align-items: center;
         }
-        #tool-pane{
-            width:320px;
+        
+        #tool-pane {
+            width: 320px;
         }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsoneditor@9.9.0/dist/jsoneditor.min.css">
@@ -264,17 +271,20 @@
 <body id="pasteImg">
 
     <header>
-       
-       <div class="logo">
-        <div id="mix-description">
+
+        <div class="logo">
+            <div id="mix-description">
+
+            </div>
+            <div class="info">
+                <div>[ MixAchievements ]</MixAchievements>
+                </div>
+                <div>
+                    < 帮助DAO成员积累声望>
+                </div>
+            </div>
 
         </div>
-        <div class="info">
-            <div>[ MixAchievements ]</MixAchievements></div>
-            <div>< 帮助DAO成员积累声望 ></div>
-        </div>
-
-       </div>
         <div class="right">
             <button id="setup"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-grid-3x3-gap-fill" viewBox="0 0 16 16">
                 <path d="M1 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2zM1 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V7zM1 12a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2z"/>
@@ -284,7 +294,7 @@
     <main>
         <div id="result"></div>
         <div id="tool-pane"></div>
-        
+
     </main>
     <footer><a href="https://github.com/shadowcz007">contact /  shadow</a></footer>
 
@@ -312,7 +322,7 @@
         <div id="jsoneditor" style="width: 100%; height:100vh;"></div>
 
         <div id="setup-pane"></div>
-        
+
         <div class="close-btn btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square-fill" viewBox="0 0 16 16">
             <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm3.354 4.646L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"/>
           </svg></div>
@@ -435,25 +445,25 @@
             description: '',
             name: '',
             image: '',
-            nft_2048:'',
-            nft_320:'',
+            nft_2048: '',
+            nft_320: '',
             // 模版图片
             template: '',
             // 素材图片
             upload: '',
             result: "{}",
-            init:false
+            init: false
         };
         // window.RESULT={};
 
 
         let pane = initPanePlugin('tool-pane');
-        let setupPane=initPanePlugin('setup-pane');
+        let setupPane = initPanePlugin('setup-pane');
 
 
-        function initPanePlugin(id='tool-pane') {
+        function initPanePlugin(id = 'tool-pane') {
             let p = new Tweakpane.Pane({
-                container: document.querySelector('#'+id)
+                container: document.querySelector('#' + id)
             });
             p.registerPlugin(TweakpaneImagePlugin);
             p.registerPlugin(TweakpaneTextareaPlugin);
@@ -477,15 +487,15 @@
         }
 
         const templates = [{
-            type:'url',
-            data:'01.svg'
+            type: 'url',
+            data: '01.svg'
         }, {
-            type:'url',
-            data:'02.svg'
+            type: 'url',
+            data: '02.svg'
         }, {
-            type:'url',
-            data:'03.svg'
-        },...loadTemplateSvgs()].filter(f=>f);
+            type: 'url',
+            data: '03.svg'
+        }, ...loadTemplateSvgs()].filter(f => f);
         window.templateSvgIndex = 0;
 
         // 模态框
@@ -504,10 +514,10 @@
             showTags: () => document.querySelector('#pane-for-multiple .tags').style.display = 'flex',
             hiddenTags: () => document.querySelector('#pane-for-multiple .tags').style.display = 'none',
             displayJson: (d) => document.querySelector('#jsoneditor').style.display = d,
-            displayIPFSUrl:url=>{
-                document.querySelector('#pane-for-multiple .tags').innerText=url;
+            displayIPFSUrl: url => {
+                document.querySelector('#pane-for-multiple .tags').innerText = url;
             },
-            displaySetup:(d)=>document.querySelector('#setup-pane').style.display = d
+            displaySetup: (d) => document.querySelector('#setup-pane').style.display = d
         }
 
         multiplePane.init();
@@ -515,39 +525,41 @@
 
         const updateResult = (id, val) => {
             let res = JSON.parse(window.PARAMS.result);
-            
-            if(id=='name'||id=='description'){
-               if(id=='name') {
-                    window.PARAMS.name=val;
-                    res.name=window.PARAMS.name;
+
+            if (id == 'name' || id == 'description') {
+                if (id == 'name') {
+                    window.PARAMS.name = val;
+                    res.name = window.PARAMS.name;
                 };
-                if(id=='description') {
-                    window.PARAMS.description=val;
-                    res.description=window.PARAMS.description;
+                if (id == 'description') {
+                    window.PARAMS.description = val;
+                    res.description = window.PARAMS.description;
                 };
-               
-              
+
+
                 // pane.refresh();
-            }else if(id=='fileData'||id=='image'){
-                let data=JSON.parse(val);
-                res={...res,...data};
+            } else if (id == 'fileData' || id == 'image') {
+                let data = JSON.parse(val);
+                res = {...res,
+                    ...data
+                };
                 // res.fileData=data.fileData;
                 // res.filetype=data.filetype
                 // image,aspectRatio
-            }else{
+            } else {
                 res[id] = JSON.parse(val);
                 delete res[id].selected;
                 delete res[id].id;
             }
-            
+
             // 填充name 和description的默认值
-            if(id==='achievements'){
-                window.PARAMS.description=res[id].text;
-                res.description=window.PARAMS.description;
-               
-                window.PARAMS.name=res[id].name;
-                res.name=window.PARAMS.name;
-              
+            if (id === 'achievements') {
+                window.PARAMS.description = res[id].text;
+                res.description = window.PARAMS.description;
+
+                window.PARAMS.name = res[id].name;
+                res.name = window.PARAMS.name;
+
                 pane.refresh();
             }
 
@@ -560,7 +572,7 @@
                 let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
                 createNFT(base64, data)
             };
-            
+
         }
 
 
@@ -603,34 +615,36 @@
             return res.data
         }
 
-        document.querySelector('#setup').addEventListener('click',e=>{
+        document.querySelector('#setup').addEventListener('click', e => {
             multiplePane.show();
             multiplePane.displaySetup('flex');
         })
 
         // 
-        function fetchFromIpfs(hashId){
+        function fetchFromIpfs(hashId) {
             // let hashId=getParams('id');
-            let url='';
-            if(hashId) url='https://ipfs.io/ipfs/'+hashId;
+            let url = '';
+            if (hashId) url = 'https://ipfs.io/ipfs/' + hashId;
             return url
         }
 
         // 从ipfs获取配置文件
         // TODO 超时处理
         function initConfig() {
-            let hashId=getParams('id');
-            let url='config.json';
-            if(hashId) url=fetchFromIpfs(hashId);
+            let hashId = getParams('id');
+            let url = 'config.json';
+            if (hashId) url = fetchFromIpfs(hashId);
             return new Promise((res, rej) => {
                 fetch(url).then(res => res.json()).then(json => {
+                    // console.log(json)
                     // 模版分离
-                    if(json.template){
-                        window.PARAMS.templateSvg=json.template;
+                    if (json.template) {
+                        window.PARAMS.templateSvg = json.template;
                         delete json.template;
                     }
                     // 默认的配置文件,供导出
-                    window._json = {...json };
+                    window._json = {...json
+                    };
                     res(json);
                 });
             })
@@ -713,7 +727,7 @@
                 // let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
                 // createNFT(base64, data)
                 // console.log(e)
-                updateResult('name',e.value);
+                updateResult('name', e.value);
 
             })
             page.addInput(window.PARAMS, 'description', {
@@ -722,7 +736,7 @@
                 lineCount: 6,
                 placeholder: '输入详细描述'
             }).on('change', e => {
-                updateResult('description',e.value);
+                updateResult('description', e.value);
             });
 
 
@@ -736,7 +750,7 @@
                 title: '生成',
                 label: '徽章',
             }).on('click', e => {
-                window.PARAMS.init=true;
+                window.PARAMS.init = true;
                 // 更新图片
                 getResult('none');
                 let data = editor.get();
@@ -747,12 +761,12 @@
             f2.addMonitor(window.PARAMS, 'nft_2048', {
                 multiline: true,
                 lineCount: 2,
-                label:'fileData/源文件'
+                label: 'fileData/源文件'
             });
             f2.addMonitor(window.PARAMS, 'image', {
                 multiline: true,
                 lineCount: 2,
-                label:'封面'
+                label: '封面'
             });
 
             f2.addButton({
@@ -804,17 +818,17 @@
                             setupPane.dispose();
                             // 更新    
                             pane = initPanePlugin('tool-pane');
-                            setupPane=initPanePlugin('setup-pane');
-                            
-                            let json=JSON.parse(this.result);
-                            json.template=window.PARAMS.templateSvg;
-                            uploadJsonFile(json,`config_${json.description}_${json.version}`).then(res=>{
+                            setupPane = initPanePlugin('setup-pane');
+
+                            let json = JSON.parse(this.result);
+                            json.template = window.PARAMS.templateSvg;
+                            uploadJsonFile(json, `config_${json.description}_${json.version}`).then(res => {
                                 console.log(res.data.Hash)
                                 updateLocationUrl({
-                                    id:res.data.Hash
+                                    id: res.data.Hash
                                 });
                             })
-                            createPane(json,true);
+                            createPane(json, true);
                         };
                         reader.readAsText(file);
                     }
@@ -855,13 +869,13 @@
                             saveTemplateSvg(this.result);
                             window.PARAMS.templateSvg = this.result;
 
-                            let json=getConfigFromLocal();
-                            json.template=window.PARAMS.templateSvg;
+                            let json = getConfigFromLocal();
+                            json.template = window.PARAMS.templateSvg;
 
-                            uploadJsonFile(json,`config_${json.description}_${json.version}`).then(res=>{
+                            uploadJsonFile(json, `config_${json.description}_${json.version}`).then(res => {
                                 console.log(res.data.Hash)
                                 updateLocationUrl({
-                                    id:res.data.Hash
+                                    id: res.data.Hash
                                 });
                             })
 
@@ -908,34 +922,34 @@
                 tags.innerHTML = '';
                 for (let index = 0; index < templates.length; index++) {
                     console.log(index)
-                    let svg=await loadSvgByType(templates[index]);
-                    if(svg){
+                    let svg = await loadSvgByType(templates[index]);
+                    if (svg) {
 
-                        let card=document.createElement('div');
-                        card.className='template-svg';
-                        let title=extractTitleFromSvg(svg);
-                        let titleDiv=document.createElement('h4');
-                        titleDiv.innerText=title;
+                        let card = document.createElement('div');
+                        card.className = 'template-svg';
+                        let title = extractTitleFromSvg(svg);
+                        let titleDiv = document.createElement('h4');
+                        titleDiv.innerText = title;
                         let im = await svg2img(svg, 'template-svg-img');
                         card.appendChild(im);
                         card.appendChild(titleDiv);
 
                         tags.appendChild(card);
-                        im.addEventListener('click',async e => {
+                        im.addEventListener('click', async e => {
                             window.templateSvgIndex = index;
-                            window.PARAMS.templateSvg=await loadSvgByType(templates[window.templateSvgIndex]);
-                        
-                                loadSvg(window.PARAMS.templateSvg);
-                                // 更新图片
-                                getResult('none');
-                                let res = editor.get();
-                                let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
-                                createNFT(base64, res)
-                        
+                            window.PARAMS.templateSvg = await loadSvgByType(templates[window.templateSvgIndex]);
+
+                            loadSvg(window.PARAMS.templateSvg);
+                            // 更新图片
+                            getResult('none');
+                            let res = editor.get();
+                            let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
+                            createNFT(base64, res)
+
                             multiplePane.hidden();
                         })
                     }
-                    
+
                 }
 
                 // Array.from(document.querySelectorAll('#pane-for-multiple .tag'), t => {
@@ -957,13 +971,13 @@
 
         }
 
-       
+
         // 更新地址
-        function updateLocationUrl(params={}){
-           
-            window.location.href=window.location.protocol+'//'+window.location.host+'?id='+(params.id||getParams('id'));
+        function updateLocationUrl(params = {}) {
+
+            window.location.href = window.location.protocol + '//' + window.location.host + '?id=' + (params.id || getParams('id'));
         }
-     
+
 
         function initPoster(page) {
             fetch('nft-event.svg').then(res => res.text()).then(text => {
@@ -994,28 +1008,28 @@
             createColors();
 
             // 模版
-            let templateObj=templates[window.templateSvgIndex];
+            let templateObj = templates[window.templateSvgIndex];
 
             // 加载ipfs的模版
-            if(window.PARAMS.templateSvg){
-                templateObj.data=window.PARAMS.templateSvg;
-                templateObj.type='string';
+            if (window.PARAMS.templateSvg) {
+                templateObj.data = window.PARAMS.templateSvg;
+                templateObj.type = 'string';
             }
             // 默认的模板
-            window.PARAMS.templateSvg= await loadSvgByType(templateObj)
+            window.PARAMS.templateSvg = await loadSvgByType(templateObj)
             loadSvg(window.PARAMS.templateSvg)
             createPane(config);
         });
 
 
         // 从本地缓存读取配置文件
-        function getConfigFromLocal(){
+        function getConfigFromLocal() {
             let config;
-            let d=localStorage.getItem('db_config');
+            let d = localStorage.getItem('db_config');
             try {
-                if(d) config=JSON.parse(d);
+                if (d) config = JSON.parse(d);
             } catch (error) {
-                    
+
             }
 
             return config
@@ -1023,16 +1037,17 @@
 
         // 创建gui面板
         // 增加缓存
-        function createPane(config,isNew=false) {
-            
-            if(isNew){
-                localStorage.setItem('db_config',JSON.stringify(config));
-            }else{
-                config=getConfigFromLocal();
+        function createPane(config, isNew = false) {
+            // console.log(config)
+            if (isNew) {
+                localStorage.setItem('db_config', JSON.stringify(config));
+            } else {
+                let local = getConfigFromLocal();
+                if (local) config = local;
             }
             console.log(config.description)
-            // dao组织信息
-            document.querySelector('#mix-description').innerHTML=`
+                // dao组织信息
+            document.querySelector('#mix-description').innerHTML = `
             <h4>${config.description}</h4><p>${config.version}</p>`;
             config = parseConfig(config);
 
@@ -1279,7 +1294,7 @@
                 // multiplePane.displayJson(display);
                 multiplePane.displayJson('none');
                 // TODO ipfs上传
-                uploadJsonFile(json,'metadata').then(res=>{
+                uploadJsonFile(json, 'metadata').then(res => {
                     multiplePane.showTags();
                     multiplePane.displayIPFSUrl(res.data.fileUrl)
                 })
@@ -1297,29 +1312,29 @@
         async function uploadFileData() {
             return await uploadFile(document.getElementById("fileData-input").files[0])
         }
-        async function uploadImage(base64,fileName='image') {
+        async function uploadImage(base64, fileName = 'image') {
             // var blob = base64toBlob(base64);
-            var file = base64toFile(base64,fileName);
+            var file = base64toFile(base64, fileName);
             return await uploadFile(file)
         }
 
-        function uploadSvgFile(text,fileName){
-            return new Promise((res,rej)=>{
-                const file = new File([text], fileName+".svg", {
+        function uploadSvgFile(text, fileName) {
+            return new Promise((res, rej) => {
+                const file = new File([text], fileName + ".svg", {
                     type: 'image/svg+xml;charset=utf-8',
-            });
-                uploadFile(file).then(result=>{
+                });
+                uploadFile(file).then(result => {
                     res(result)
                 })
             })
         }
 
-        function uploadJsonFile(json,fileName){
-            return new Promise((res,rej)=>{
-                const file = new File([JSON.stringify(json)], fileName+".json", {
+        function uploadJsonFile(json, fileName) {
+            return new Promise((res, rej) => {
+                const file = new File([JSON.stringify(json)], fileName + ".json", {
                     type: "application/Json",
-            });
-                uploadFile(file).then(result=>{
+                });
+                uploadFile(file).then(result => {
                     res(result)
                 })
             })
@@ -1339,16 +1354,16 @@
                 body: formData //自动修改请求头,formdata的默认请求头的格式是 multipart/form-data
             });
 
-            let data=await res.json();
+            let data = await res.json();
             // 文件类型
-            data.data.type=file.type;
+            data.data.type = file.type;
 
             return data;
 
         }
 
 
-        function base64toFile(dataurl,fileName='image') {
+        function base64toFile(dataurl, fileName = 'image') {
             var arr = dataurl.split(','),
                 mime = arr[0].match(/:(.*?);/)[1],
                 bstr = window.atob(arr[1]),
@@ -1357,7 +1372,7 @@
             while (n--) {
                 u8arr[n] = bstr.charCodeAt(n);
             }
-            return new File([u8arr], fileName+'.'+mime.replace(/.*\//ig,''),{
+            return new File([u8arr], fileName + '.' + mime.replace(/.*\//ig, ''), {
                 type: mime
             });
         }
@@ -1437,23 +1452,23 @@
             return parseSvg(window.PARAMS.templateSvg, text);
         }
 
-           //  提取标题
-     function extractTitleFromSvg(text){
-        let svg = parseSvg(text);
-        let title = svg.findOne('title');
-        if (title) title = title.node.innerHTML.trim();
-        return title;
-     }
+        //  提取标题
+        function extractTitleFromSvg(text) {
+            let svg = parseSvg(text);
+            let title = svg.findOne('title');
+            if (title) title = title.node.innerHTML.trim();
+            return title;
+        }
 
-    //  加载svg
-      async  function loadSvgByType(data){
-            let svg=data.data;
-            return new Promise((res,rej)=>{
-                if(data.type==='url'){
-                    svg=null;
+        //  加载svg
+        async function loadSvgByType(data) {
+            let svg = data.data;
+            return new Promise((res, rej) => {
+                if (data.type === 'url') {
+                    svg = null;
 
-                    fetch(data.data).then(async result=>{
-                        if(result.ok) {
+                    fetch(data.data).then(async result => {
+                        if (result.ok) {
                             svg = await result.text()
                         };
                         res(svg);
@@ -1461,44 +1476,44 @@
                         console.error('There has been a problem with your fetch operation:', error);
                     });
 
-                }else{
+                } else {
                     res(svg);
                 }
             })
-              
+
         }
 
         // 缓存svg
-        function saveTemplateSvg(text){
-            let id=objectHash(text);
-            localStorage.setItem(id,text);
-            let svgs=localStorage.getItem('_templateSvgs')||'[]';
+        function saveTemplateSvg(text) {
+            let id = objectHash(text);
+            localStorage.setItem(id, text);
+            let svgs = localStorage.getItem('_templateSvgs') || '[]';
             try {
-                if(svgs)svgs=JSON.parse(svgs);
+                if (svgs) svgs = JSON.parse(svgs);
             } catch (error) {
-                
+
             };
             svgs.push(id);
-            localStorage.setItem('_templateSvgs',JSON.stringify(svgs));
+            localStorage.setItem('_templateSvgs', JSON.stringify(svgs));
         }
 
         // 加载本地缓存到svg
-        function loadTemplateSvgs(){
-            let svgs=localStorage.getItem('_templateSvgs')||'[]';
+        function loadTemplateSvgs() {
+            let svgs = localStorage.getItem('_templateSvgs') || '[]';
             try {
-                if(svgs)svgs=JSON.parse(svgs);
+                if (svgs) svgs = JSON.parse(svgs);
             } catch (error) {
-                
+
             };
             for (let index = 0; index < svgs.length; index++) {
-                let text=localStorage.getItem(svgs[index]);
-                if(text)  svgs[index]={
-                    type:'string',
-                    data:text
+                let text = localStorage.getItem(svgs[index]);
+                if (text) svgs[index] = {
+                    type: 'string',
+                    data: text
                 }
             }
 
-            return svgs.filter(f=>f);
+            return svgs.filter(f => f);
         }
 
         // 
@@ -1596,7 +1611,7 @@
                     im.id = 'nft-result';
                     im.src = base64;
                     im.onload = async() => {
-                         
+
                         let s320 = await imgResize(im, 320, 320);
                         let im320 = new Image();
                         im320.className = 'nft-image'
@@ -1613,24 +1628,24 @@
                             });
 
                             // 当点过生成后才可以上传
-                            if(window.PARAMS.init)  uploadImage(s320,im320.id+'.png').then(r320=>{
-                                window.PARAMS.image=r320.data.fileUrl;
-                                uploadImage(base64,im.id+'.png').then(r=>{
-                                    window.PARAMS.nft_2048=r.data.fileUrl;
+                            if (window.PARAMS.init) uploadImage(s320, im320.id + '.png').then(r320 => {
+                                window.PARAMS.image = r320.data.fileUrl;
+                                uploadImage(base64, im.id + '.png').then(r => {
+                                    window.PARAMS.nft_2048 = r.data.fileUrl;
                                     // pane.refresh();
-                                    updateResult('image',JSON.stringify({
-                                        image:window.PARAMS.image,
-                                        aspectRatio:1
+                                    updateResult('image', JSON.stringify({
+                                        image: window.PARAMS.image,
+                                        aspectRatio: 1
                                     }));
 
-                                    updateResult('fileData',JSON.stringify({
-                                        fileData:window.PARAMS.nft_2048,
-                                        filetype:r.data.type
+                                    updateResult('fileData', JSON.stringify({
+                                        fileData: window.PARAMS.nft_2048,
+                                        filetype: r.data.type
                                     }));
 
                                 })
                             })
-                            
+
                         }
 
                     }
@@ -1694,7 +1709,7 @@
 
 
         // 从url获取参数
-        function getParams (name) {
+        function getParams(name) {
             var reg = new RegExp("[^\\?&]?" + name + "=[^&]+");
             var regArr = window.location.search.match(reg);
             if (regArr != null) {
@@ -1702,7 +1717,6 @@
             }
             return "";
         }
-
     </script>
 </body>
 
