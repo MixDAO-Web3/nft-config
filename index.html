@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -34,6 +35,7 @@
             font-weight: 800;
             background: yellow;
         }
+        
         .btn {
             width: 44px;
             height: 44px;
@@ -47,7 +49,7 @@
         .selected {
             background-color: aquamarine !important;
         }
-
+        
         .nft-image {
             width: 300px;
             height: 300px;
@@ -86,7 +88,6 @@
             bottom: 22px;
             right: 40%;
         }
-        
         
         .tags {
             display: none;
@@ -139,8 +140,6 @@
             margin: 12px;
             width: 200px;
         }
-        
-        
         
         #jsoneditor {
             display: none;
@@ -228,9 +227,9 @@
             background-color: black;
             text-align: right;
             display: flex;
-    color: white;
-    justify-content: space-between;
-    align-items: center;
+            color: white;
+            justify-content: space-between;
+            align-items: center;
         }
         
         footer a {
@@ -244,7 +243,7 @@
             color: wheat;
         }
         
-        footer #loading-info{
+        footer #loading-info {
             font-size: 12px;
             color: gray;
         }
@@ -256,16 +255,16 @@
             justify-content: center;
             align-items: center;
         }
-
-        #setup-pane .tp-rotv{
+        
+        #setup-pane .tp-rotv {
             width: 320px;
         }
         
-        #tool-pane .tp-rotv{
+        #tool-pane .tp-rotv {
             width: 320px;
         }
-
-        #loading{
+        
+        #loading {
             display: none;
             position: fixed;
             top: 0;
@@ -303,7 +302,7 @@
                 <div>[ MixAchievements ]</MixAchievements>
                 </div>
                 <div>
-                    < 帮助DAO成员积累声望 >
+                    < 帮助DAO成员积累声望>
                 </div>
             </div>
 
@@ -341,8 +340,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
                 <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
                 <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
-              </svg>
-              加载中
+              </svg> 加载中
         </div>
     </div>
 
@@ -463,7 +461,7 @@
         // https://icons.getbootstrap.com/
 
         let appToken;
-        fetch('app-token.txt').then(res=>res.text()).then(res=>appToken=res);
+        fetch('app-token.txt').then(res => res.text()).then(res => appToken = res);
 
         window.PARAMS = {
             description: '',
@@ -515,37 +513,37 @@
 
 
         // 从哪里读取数据
-        class Loading{
-            constructor(opts={}){
-                this.type=opts.type;
+        class Loading {
+            constructor(opts = {}) {
+                this.type = opts.type;
             }
-            dataFromInfo(type='ipfs'){
-                this.type=type;
-                let types={
-                    'ipfs':'从IPFS加载',
-                    'base':'官方示例',
-                    'offline':'默认',
-                    'local':'本地缓存',
-                    'anyweb':'从anyweb钱包'
+            dataFromInfo(type = 'ipfs') {
+                    this.type = type;
+                    let types = {
+                        'ipfs': '从IPFS加载',
+                        'base': '官方示例',
+                        'offline': '默认',
+                        'local': '本地缓存',
+                        'anyweb': '从anyweb钱包'
+                    }
+                    document.querySelector('#loading-info').innerText = types[type];
                 }
-                document.querySelector('#loading-info').innerText=types[type];
-            }
-            // loading
-            // 提示加载开始
-            start(text='开始加载...'){
-                document.querySelector('#loading-info').innerText=text;
+                // loading
+                // 提示加载开始
+            start(text = '开始加载...') {
+                document.querySelector('#loading-info').innerText = text;
                 multiplePane.show();
                 multiplePane.displayLoading('flex');
             }
-            end(text='完成'){
-                document.querySelector('#loading-info').innerText=text;
-                setTimeout(()=>{
+            end(text = '完成') {
+                document.querySelector('#loading-info').innerText = text;
+                setTimeout(() => {
                     multiplePane.hidden();
                     multiplePane.displayLoading('none');
-                },1000);
+                }, 1000);
             }
         }
-        const loading=new Loading();
+        const loading = new Loading();
 
 
 
@@ -562,7 +560,7 @@
             return p
         }
 
-        
+
 
         // 模态框
         const multiplePane = {
@@ -582,7 +580,7 @@
             showTags: () => document.querySelector('#pane-for-multiple .tags').style.display = 'flex',
             hiddenTags: () => document.querySelector('#pane-for-multiple .tags').style.display = 'none',
             displayJson: (d) => document.querySelector('#jsoneditor').style.display = d,
-            displayIPFSUrl: (url,data) => {
+            displayIPFSUrl: (url, data) => {
                 document.querySelector('#pane-for-multiple .tags').innerHTML = `<p style='padding: 56px;
                 font-size: 12px;
                 width: 50%;
@@ -598,23 +596,23 @@
                 `;
             },
             displaySetup: (d) => document.querySelector('#setup-pane').style.display = d,
-            displayLoading:d=>document.querySelector('#loading').style.display = d
+            displayLoading: d => document.querySelector('#loading').style.display = d
         }
 
         multiplePane.init();
 
 
-        
+
         const updateResult = (id, val) => {
             let res = JSON.parse(window.PARAMS.result);
 
             if (id == 'name' || id == 'description') {
                 if (id == 'name') {
-                    window.PARAMS.name = val||'';
+                    window.PARAMS.name = val || '';
                     res.name = window.PARAMS.name;
                 };
                 if (id == 'description') {
-                    window.PARAMS.description = val||'';
+                    window.PARAMS.description = val || '';
                     res.description = window.PARAMS.description;
                 };
 
@@ -664,7 +662,7 @@
             multiplePane.displaySetup('flex');
         })
 
-    
+
         // function loadingDataFromInfo(type='ipfs'){
         //     let types={
         //         'ipfs':'从IPFS加载',
@@ -682,13 +680,12 @@
             let d = localStorage.getItem('db_config');
             try {
                 if (d) config = JSON.parse(d);
-            } catch (error) {
-            }
+            } catch (error) {}
             return config
         }
 
         // 拼接ipfs地址
-        function createIpfsUrl(hashId,hostname='ipfs.s11edao.com') {
+        function createIpfsUrl(hashId, hostname = 'ipfs.s11edao.com') {
             let url = '';
             // ${window.location.protocol}
             if (hashId) url = `https://${hostname}/ipfs/${hashId}`;
@@ -697,27 +694,26 @@
 
 
         // config的初始化
-        function defaultConfig(){
-            return {   "version":"1.0",
-                        "description":"描述",
-                        "creators": [],
-                        "sponsors": [],
-                        "proposal": ["MixDAO通行证和徽章体系发布"],
-                        "skills": [],
-                        "certifications": [{
-                            "name": "MixDAO",
-                            "url": "https://github.com/MixDAO-Web3",
-                            "selected": true
-                        }],
-                        "technicalSupports": [],
-                        "achievements": [
-                        {
-                            "name": "Hello MixDAO",
-                            "text": "今天，DAO成立啦~",
-                            "selected": true
-                        }
-                        ]
-                    }
+        function defaultConfig() {
+            return {
+                "version": "1.0",
+                "description": "描述",
+                "creators": [],
+                "sponsors": [],
+                "proposal": ["MixDAO通行证和徽章体系发布"],
+                "skills": [],
+                "certifications": [{
+                    "name": "MixDAO",
+                    "url": "https://github.com/MixDAO-Web3",
+                    "selected": true
+                }],
+                "technicalSupports": [],
+                "achievements": [{
+                    "name": "Hello MixDAO",
+                    "text": "今天，DAO成立啦~",
+                    "selected": true
+                }]
+            }
         }
 
         // 处理配置文件
@@ -725,13 +721,13 @@
         function parseConfig(json) {
             let nJson = {...json
             };
-           if(nJson.skills) nJson.skills = Array.from(nJson.skills.filter(f => f), a => {
+            if (nJson.skills) nJson.skills = Array.from(nJson.skills.filter(f => f), a => {
                 return {
                     name: a.trim(),
                     selected: Math.random() > 0.8
                 }
             });
-            if(nJson.proposal) nJson.proposal = Array.from(nJson.proposal, p => {
+            if (nJson.proposal) nJson.proposal = Array.from(nJson.proposal, p => {
                 return {
                     name: p
                 }
@@ -743,37 +739,38 @@
         // 从ipfs获取配置文件
         // TODO 超时处理
         function initConfig() {
-            const extractJson=json=>{
-                if(!json){
+            const extractJson = json => {
+                if (!json) {
                     // 本地缓存
-                    json=getConfigFromLocal();
-                    if(json){
+                    json = getConfigFromLocal();
+                    if (json) {
                         loading.dataFromInfo('local')
-                    }else{
+                    } else {
                         loading.dataFromInfo('offline')
-                        json=defaultConfig();
+                        json = defaultConfig();
                     }
-                }else if(json&&getConfigFromLocal()){
+                } else if (json && getConfigFromLocal()) {
                     // 判断是否是base的
-                    if(loading.type==='base') {
+                    if (loading.type === 'base') {
                         loading.dataFromInfo('local')
-                        json=getConfigFromLocal()
+                        json = getConfigFromLocal()
                     };
                 }
                 // 模版分离
-                if (json&&json.template) {
+                if (json && json.template) {
                     window.PARAMS.templateSvg = json.template;
                     delete json.template;
                 }
                 // 默认的配置文件,供导出
-                if(json) window._json = {...json};    
+                if (json) window._json = {...json
+                };
                 return json
             };
 
-            const checkIsOk=res=>{
-                if(res&&res.ok){
+            const checkIsOk = res => {
+                if (res && res.ok) {
                     // 显示提示
-                    loading.dataFromInfo(res.url.match(url)?'base':'ipfs');
+                    loading.dataFromInfo(res.url.match(url) ? 'base' : 'ipfs');
                     return res.json();
                 };
             }
@@ -794,23 +791,23 @@
                     Promise.all([
                         mixFetch(ipfsUrl),
                         mixFetch(url),
-                    ]).then(ps=>{
+                    ]).then(ps => {
                         // console.log(ps)
-                        let res=ps.filter(ps=>ps.ok)[0];
+                        let res = ps.filter(ps => ps.ok)[0];
                         return checkIsOk(res);
-                    }).then(json=>{
+                    }).then(json => {
                         res(extractJson(json))
                     });
-  
-                }else{
-                    mixFetch(url).then(res=>checkIsOk(res)).then(json=>{
+
+                } else {
+                    mixFetch(url).then(res => checkIsOk(res)).then(json => {
                         res(extractJson(json))
                     });
-                }              
+                }
             })
         };
 
-        
+
 
 
         function initPane(config) {
@@ -895,35 +892,40 @@
                 getResult('none');
                 let data = editor.get();
                 let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
-                
-                createNFT(base64, data).then(res=> {
-                     // 当点过生成后才可以上传
-                    if (window.PARAMS.init){
-                        const {image,imageName,fileData,fileDataName}=res;
+
+                createNFT(base64, data).then(res => {
+                    // 当点过生成后才可以上传
+                    if (window.PARAMS.init) {
+                        const {
+                            image,
+                            imageName,
+                            fileData,
+                            fileDataName
+                        } = res;
                         Promise.all([uploadImage(image, imageName),
-                                        uploadImage(fileData,fileDataName)
-                                    ]).then(res=>{
-                                        window.PARAMS.image = res[0].data.fileUrl;
-                                        window.PARAMS.nft_2048 = res[1].data.fileUrl;
+                            uploadImage(fileData, fileDataName)
+                        ]).then(res => {
+                            window.PARAMS.image = res[0].data.fileUrl;
+                            window.PARAMS.nft_2048 = res[1].data.fileUrl;
 
-                                         // pane.refresh();
-                                         updateResult('image', JSON.stringify({
-                                            image: window.PARAMS.image,
-                                            aspectRatio: 1,
-                                            fileData: window.PARAMS.nft_2048,
-                                            filetype: res[1].data.type
-                                        }));
+                            // pane.refresh();
+                            updateResult('image', JSON.stringify({
+                                image: window.PARAMS.image,
+                                aspectRatio: 1,
+                                fileData: window.PARAMS.nft_2048,
+                                filetype: res[1].data.type
+                            }));
 
-                                        getResult('block', 'metadata');
-                                        multiplePane.displayLoading('none');
-                                        // loading.end();
+                            getResult('block', 'metadata');
+                            multiplePane.displayLoading('none');
+                            // loading.end();
 
-                        })         
-                    }else{
+                        })
+                    } else {
                         // loading.end();
                     }
 
-                    
+
                 });
 
             });
@@ -951,15 +953,15 @@
                 title: '另存为',
                 label: 'ZIP包',
             }).on('click', e => {
-                
+
                 // window.PARAMS.init = true;
                 // 更新图片
                 getResult('none');
                 let data = editor.get();
                 let base64 = img2base64(window.PARAMS.upload, window.PARAMS.upload.naturalWidth, window.PARAMS.upload.naturalHeight, 'png');
-                
 
-                createNFT(base64, data).then(res=> {
+
+                createNFT(base64, data).then(res => {
                     getResult()
                 })
             })
@@ -1008,7 +1010,7 @@
                             createPane(json, true);
 
                             uploadJsonFile(json, `config_${json.description}_${json.version}`).then(res => {
-                                if (res.data) {
+                                if (res && res.data) {
                                     console.log(res.data.Hash)
                                     updateLocationUrl({
                                         id: res.data.Hash
@@ -1061,7 +1063,7 @@
                             loadSvg(window.PARAMS.templateSvg)
 
                             uploadJsonFile(json, `config_${json.description}_${json.version}`).then(res => {
-                                if (res.data) {
+                                if (res && res.data) {
                                     console.log(res.data.Hash)
                                     updateLocationUrl({
                                         id: res.data.Hash
@@ -1142,7 +1144,7 @@
 
         }
 
-        function initImagesPane(page){
+        function initImagesPane(page) {
             page.addButton({
                 title: '更多',
                 label: '选择'
@@ -1208,7 +1210,7 @@
         });
 
 
-        
+
 
         // 创建gui面板
         // 增加缓存
@@ -1281,10 +1283,10 @@
                     text: obj.name
                 })
             };
-            
-            if (selectedValues.length == 0&&objs.length>0) selectedValues.push(objs[0]);
-            
-            window.PARAMS[menuItems[id]] = JSON.stringify(selectedValues[0])||'[]';
+
+            if (selectedValues.length == 0 && objs.length > 0) selectedValues.push(objs[0]);
+
+            window.PARAMS[menuItems[id]] = JSON.stringify(selectedValues[0]) || '[]';
 
             if (multiple) {
                 // console.log(options,id,selectedValues,JSON.stringify(selectedValues[0]))
@@ -1321,19 +1323,19 @@
                 })
 
             } else {
-                
-                updateResult(id, JSON.stringify(selectedValues[0])||'{}');
+
+                updateResult(id, JSON.stringify(selectedValues[0]) || '{}');
                 // console.log(id, selectedValues[0],menuItems[id],options)
                 page.addBlade({
                     view: 'list',
                     label: menuItems[id],
                     options,
-                    value: JSON.stringify(selectedValues[0])||'',
+                    value: JSON.stringify(selectedValues[0]) || '',
                 }).on('change', e => {
                     // console.log(id, e)
                     updateResult(id, e.value);
                 });
-                
+
             }
 
         }
@@ -1467,7 +1469,7 @@
                 // TODO ipfs上传
                 uploadJsonFile(json, 'metadata').then(res => {
                     multiplePane.showTags();
-                    multiplePane.displayIPFSUrl(res.data.fileUrl,json)
+                    multiplePane.displayIPFSUrl(res.data.fileUrl, json)
                 })
             }
 
@@ -1519,19 +1521,23 @@
 
             const formData = new FormData();
             formData.append("file", file);
-            const url = window.location.protocol + "//api.s11edao.com/adminIpfsUpload?currentPath="+getConfigFromLocal().description;
-            const res = await fetch(url, {
+            const url = window.location.protocol + "//api.s11edao.com/adminIpfsUpload?currentPath=" + getConfigFromLocal().description;
+            const res = await mixFetch(url, {
                 method: "POST",
                 body: formData, //自动修改请求头,formdata的默认请求头的格式是 multipart/form-data
-                headers:{'Authorization':appToken}
-            });
+                headers: {
+                    'Authorization': appToken
+                }
+            }, 10000);
+            if (res.ok) {
+                let data = await res.json();
+                // 文件类型
+                if (data.data) data.data.type = file.type;
 
-            let data = await res.json();
-            // 文件类型
-            if (data.data) data.data.type = file.type;
-
-            return data;
-
+                return data;
+            } else {
+                return;
+            }
         }
 
 
@@ -1765,23 +1771,23 @@
         }
 
         // 创建图片
-        function createImage(id = 'nft-result',className='nft-image',base64){
-            return new Promise((resolve,reject)=>{
+        function createImage(id = 'nft-result', className = 'nft-image', base64) {
+            return new Promise((resolve, reject) => {
                 let im = new Image();
-                im.className =className;
+                im.className = className;
                 im.id = id;
                 im.src = base64;
-                im.onload =async() => {
+                im.onload = async() => {
                     resolve(im);
                 };
-             });
+            });
         }
 
         function createNFT(url, data) {
             // console.log(data)
-           return new Promise((resolve,reject)=>{
+            return new Promise((resolve, reject) => {
                 if (!url) return resolve();
-                    // if (!(data.name != '')) return alert('请输入名称');
+                // if (!(data.name != '')) return alert('请输入名称');
                 let text = data.name;
                 if (data.sponsors && data.sponsors.length > 0) text = data.name + ' - ' + Array.from(data.sponsors, s => s.name).join(' & ');
 
@@ -1791,33 +1797,33 @@
                     svg2base64(svg.svg(), 'nft').then(async base64 => {
                         document.querySelector('#result').innerHTML = '';
 
-                        let im =  await createImage('nft-result','nft-image',base64);
+                        let im = await createImage('nft-result', 'nft-image', base64);
 
                         let s320 = await imgResize(im, 320, 320);
-                        
-                        let im320 = await createImage('nft-result-320','nft-image',s320);
-                        
-                        if (document.querySelector('#result').children.length === 0) {
-                                document.querySelector('#result').appendChild(im320);
-                                document.querySelector('#result').appendChild(im);
-                                im.addEventListener('click', e => {
-                                    downloadFile(base64, 'nft_2048.png')
-                                })
-                                im320.addEventListener('click', e => {
-                                    downloadFile(s320, 'nft_320.png')
-                                });
 
-                               
-                                resolve({
-                                        image:s320,
-                                        imageName:im320.id + '.png',
-                                        fileData:base64,
-                                        fileDataName:im.id + '.png'
-                                    })
-                            
-                            }else{
-                                resolve();
-                            }
+                        let im320 = await createImage('nft-result-320', 'nft-image', s320);
+
+                        if (document.querySelector('#result').children.length === 0) {
+                            document.querySelector('#result').appendChild(im320);
+                            document.querySelector('#result').appendChild(im);
+                            im.addEventListener('click', e => {
+                                downloadFile(base64, 'nft_2048.png')
+                            })
+                            im320.addEventListener('click', e => {
+                                downloadFile(s320, 'nft_320.png')
+                            });
+
+
+                            resolve({
+                                image: s320,
+                                imageName: im320.id + '.png',
+                                fileData: base64,
+                                fileDataName: im.id + '.png'
+                            })
+
+                        } else {
+                            resolve();
+                        }
                     })
                 }
             })
@@ -1862,7 +1868,7 @@
             return new Promise((res, rej) => {
                 svg2img(text, 'nft-image').then(im => {
                     window.PARAMS.template = im;
-                    if(pane)pane.refresh();
+                    if (pane) pane.refresh();
                     res();
                 })
             });
@@ -1888,25 +1894,27 @@
 
         // 请求封装
         // 默认2000超时
-        function mixFetch(url,opts,timeout=2000) {
+        function mixFetch(url, opts, timeout = 2000) {
             let timeoutPromise = (t) => {
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        resolve(new Response("timeout", { status: 504, statusText: "timeout" }));
+                        resolve(new Response("timeout", {
+                            status: 504,
+                            statusText: "timeout"
+                        }));
                     }, t);
                 });
             }
-            let requestPromise = (url,opts) => {
-                return fetch(url,opts).catch(err=>new Response("bad url", { status: 400, statusText: "bad url" }));
+            let requestPromise = (url, opts) => {
+                return fetch(url, opts).catch(err => new Response("bad url", {
+                    status: 400,
+                    statusText: "bad url"
+                }));
             };
-            return Promise.race([timeoutPromise(timeout), requestPromise(url,opts)])
+            return Promise.race([timeoutPromise(timeout), requestPromise(url, opts)])
         }
 
-        // 
-        
-
-           
-
+        //
     </script>
 </body>
 
