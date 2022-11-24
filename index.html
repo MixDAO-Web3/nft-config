@@ -905,8 +905,9 @@
                         Promise.all([uploadImage(image, imageName),
                             uploadImage(fileData, fileDataName)
                         ]).then(res => {
-                            window.PARAMS.image = res[0].data.fileUrl;
-                            window.PARAMS.nft_2048 = res[1].data.fileUrl;
+                            // console.log(res)
+                            window.PARAMS.image = res[0] ? res[0].data.fileUrl : '';
+                            window.PARAMS.nft_2048 = res[1] ? res[1].data.fileUrl : '';
 
                             // pane.refresh();
                             updateResult('image', JSON.stringify({
@@ -1528,7 +1529,7 @@
                 headers: {
                     'Authorization': appToken
                 }
-            }, 10000);
+            }, 16000);
             if (res.ok) {
                 let data = await res.json();
                 // 文件类型
