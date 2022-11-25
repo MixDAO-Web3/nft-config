@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MixAchievements</title>
+    <title>MixAchievements v1.0</title>
     <style>
         body {
             margin: 0;
@@ -446,6 +446,13 @@
 
 
     <script>
+        //用来强制刷新本地缓存的
+        if (document.title != localStorage.getItem('__title')) {
+            localStorage.clear();
+            localStorage.setItem('__title', document.title);
+            console.log('强制清空缓存')
+        }
+
         // 更新地址
         Location.prototype.updateParams = function(params = {}) {
             this.href = this.protocol + '//' + this.host + this.pathname + '?id=' + (params.id || this.getParams('id'));
