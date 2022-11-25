@@ -656,6 +656,7 @@
             // loadTemplateSvgFromLocal
             getFromLocal() {
                 let svg = localStorage.getItem('_template_id');
+                if (svg == 'null' || svg == 'undefined') svg = null;
                 return svg
             }
 
