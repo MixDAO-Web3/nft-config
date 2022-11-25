@@ -1047,7 +1047,7 @@
                 }
                 template.select(text);
                 template.add(template.svg);
-                console.log(text)
+                // console.log(text)
             }
 
             // 默认的配置文件,供导出
@@ -1228,19 +1228,25 @@
                         Promise.all([uploadImage(image, imageName),
                             uploadImage(fileData, fileDataName)
                         ]).then(res => {
-                            // console.log(res)
-                            window.PARAMS.image = res[0] ? res[0].data.fileUrl : '';
-                            window.PARAMS.nft_2048 = res[1] ? res[1].data.fileUrl : '';
+                            if (res[0] && res[1]) {
+                                window.PARAMS.image = res[0] ? res[0].data.fileUrl : '';
+                                window.PARAMS.nft_2048 = res[1] ? res[1].data.fileUrl : '';
 
-                            // pane.refresh();
-                            updateResult('image', JSON.stringify({
-                                image: window.PARAMS.image,
-                                aspectRatio: 1,
-                                fileData: window.PARAMS.nft_2048,
-                                filetype: res[1].data.type
-                            }));
+                                // console.log(res[1])
+                                updateResult('image', JSON.stringify({
+                                    image: window.PARAMS.image,
+                                    aspectRatio: 1,
+                                    fileData: window.PARAMS.nft_2048,
+                                    filetype: res[1] ? res[1].data.type : ''
+                                }));
 
-                            getResult('block', 'metadata');
+                                getResult('block', 'metadata');
+
+                            } else {
+                                alert('请重试');
+                                multiplePane.hidden();
+                            }
+
                             multiplePane.displayLoading('none');
                             // loading.end();
 
@@ -1791,7 +1797,7 @@
                 headers: {
                     'Authorization': appToken
                 }
-            }, 16000);
+            }, 22000);
             if (res.ok) {
                 let data = await res.json();
                 // 文件类型
