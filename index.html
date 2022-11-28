@@ -915,7 +915,9 @@
 
                         Promise.all([
                             mixFetch(ipfsUrl),
-                            mixFetch(that.url),
+                            mixFetch(that.url, {
+                                cache: 'no-cache'
+                            }),
                         ]).then(ps => {
                             // console.log(ps)
                             let res = ps.filter(ps => ps.ok)[0];
@@ -925,7 +927,9 @@
                         });
 
                     } else {
-                        mixFetch(that.url).then(res => checkIsOk(res)).then(json => {
+                        mixFetch(that.url, {
+                            cache: 'no-cache'
+                        }).then(res => checkIsOk(res)).then(json => {
 
                             res(extractJson(json))
                         });
@@ -970,7 +974,9 @@
         // https://icons.getbootstrap.com/
 
         let appToken;
-        fetch('app-token.txt').then(res => res.text()).then(res => appToken = res);
+        fetch('app-token.txt', {
+            cache: 'no-cache'
+        }).then(res => res.text()).then(res => appToken = res);
 
         window.PARAMS = {
             description: '',
